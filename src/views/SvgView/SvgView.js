@@ -1,12 +1,14 @@
 import React from "react";
 import { WrapperView } from "./SvgView.styles";
 import Header from "../../components/Header/Header";
+import DashBoard from "../../components/Dashboard/Dashboard";
 const SvgView = (props) => {
   return (
     <>
       <Header title={"SVG"} />
-
-      <WrapperView></WrapperView>
+      <WrapperView>
+        <DashBoard color="#FF9797"></DashBoard>
+      </WrapperView>
     </>
   );
 };

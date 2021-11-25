@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
 export const SpaceWrapper = styled.div`
-  width: ${(props) => props.width}%;
-  height: ${(props) => props.height}%;
+  min-width: ${(props) => props.width}%;
+  min-height: ${(props) => props.height}%;
 `;

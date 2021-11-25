@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../../components/Button/Button";
+import ButtonLink from "../../components/ButtonLink/ButtonLink";
 import SeccionButton from "../../components/SeccionButton/SeccionButton";
 import Space from "../../components/Space/Space";
 import { WrapperView } from "./HomeView.styles";
@@ -9,9 +9,9 @@ const HomeView = (props) => {
     <>
       <WrapperView>
         <SeccionButton>
-          <Button texto="SVG" color="#FF9797" url={`/svg`}></Button>
+          <ButtonLink texto="SVG" color="#FF9797" url={`/svg`}></ButtonLink>
           <Space h={10} w={10}></Space>
-          <Button texto="CANVAS" color="#A6AFFF" url={`/canvas`}></Button>
+          <ButtonLink texto="CANVAS" color="#A6AFFF" url={`/canvas`}></ButtonLink>
         </SeccionButton>
       </WrapperView>
     </>
