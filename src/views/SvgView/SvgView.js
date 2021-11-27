@@ -1,5 +1,5 @@
 import React from "react";
-import { WrapperView } from "./SvgView.styles";
+import { WrapperView } from "../../GlobalStyle";
 import Header from "../../components/Header/Header";
 import DashBoard from "../../components/Dashboard/Dashboard";
 const SvgView = (props) => {
