@@ -8,6 +8,7 @@ import "./App.css";
 import HomeView from "./views/HomeView/HomeView";
 import CanvasView from "./views/CanvasView/CanvasView";
 import SvgView from "./views/SvgView/SvgView";
+import { GlobalStyle } from "./GlobalStyle";
 function App() {
   return (
     <Router>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/canvas" exact component={CanvasView} />
         <Redirect path="/" exact component={HomeView} />
       </Switch>
+      <GlobalStyle/>
     </Router>
   );
 }
