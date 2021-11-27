@@ -15,7 +15,6 @@ const CanvasView = (props) => {
   const [inicioY, setInicioY] = useState(0);
   const [cv, setCv] = useState(document.getElementById("canvas"));
   const [cx, setCx] = useState();
-  const [load, setLoad] = useState(true);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
   var objetoActual = null;
@@ -89,17 +88,22 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const dibujar = () => {
+  const dibujar = (name) => {
     clases.push({
       x: 10,
       y: 10,
       width: 80,
       height: 50,
       color: "green",
-      name: "Perro",
+      name: `${name}`,
     });
   };
-
+  const handleNewClass = (e) => {
+    e.preventDefault();
+    const { nombre } = e.target.elements;
+    console.log(nombre.value);
+    dibujar(nombre.value);
+  };
   return (
     <>
       <WrapperView>
@@ -111,15 +115,26 @@ const CanvasView = (props) => {
           </WrapperCanvas>
         </WrapperDescktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
-          <p>ESTE ES MI PRIMER MODAL AQUI</p>
-          <Button
+          <p>NUEVA CLASE</p>
+          <form onSubmit={handleNewClass}>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                placeholder="Nombre de la clase"
+                name="nombre"
+              />
+            </label>
+            <input type="submit" value="CREAR CLASE" onClick={closeModal} />
+          </form>
+          {/* <Button
             action={() => {
-              dibujar();
+              
               closeModal();
             }}
           >
             CREAR
-          </Button>
+          </Button> */}
         </Modal>
       </WrapperView>
     </>
