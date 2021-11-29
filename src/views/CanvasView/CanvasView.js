@@ -4,7 +4,6 @@ import DashBoard from "../../components/Dashboard/Dashboard";
 import Header from "../../components/Header/Header";
 import { WrapperView } from "../../GlobalStyle";
 import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
-import { ClaseModel } from "../../types/clase";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
@@ -15,7 +14,6 @@ const CanvasView = (props) => {
   const [inicioY, setInicioY] = useState(0);
   const [cv, setCv] = useState(document.getElementById("canvas"));
   const [cx, setCx] = useState();
-  const [atributos, setAtributos] = useState([]);
   const [allGood, setAllGood] = useState(false);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
@@ -25,7 +23,7 @@ const CanvasView = (props) => {
     cx.fillStyle = "#f0f0f0";
     cx.fillRect(0, 0, 900, 550);
     for (var i = 0; i < clases.length; i++) {
-      cx.font = "22px Arial";
+      cx.font = "20px Arial";
       cx.fillStyle = "white";
       cx.strokeStyle = "black";
       cx.strokeRect(
@@ -36,18 +34,17 @@ const CanvasView = (props) => {
       );
 
       cx.fillStyle = "black";
-      cx.fillText(clases[i].name, clases[i].x + 2, clases[i].y + 20);
+      cx.fillText(clases[i].name, clases[i].x + 1, clases[i].y + 20);
       cx.beginPath();
       cx.moveTo(clases[i].x, clases[i].y + 24);
       cx.lineTo(clases[i].x + clases[i].width, clases[i].y + 24);
       cx.stroke();
-      console.log(clases[i].attributes);
-      let aumento = 40;
-      cx.font = "16px Arial";
+      let aumento = 36;
+      cx.font = "12px Arial";
       cx.strokeStyle = "black";
       clases[i].attributes.forEach((element) => {
-        cx.fillText(element, clases[i].x + 2, clases[i].y + aumento);
-        aumento += 21;
+        cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
+        aumento += 15;
       });
     }
   }
@@ -57,12 +54,10 @@ const CanvasView = (props) => {
   useEffect(() => {
     if (cv) {
       setCx(cv.getContext("2d"));
-      console.log(cv, cx);
     }
   }, [cv]);
   useEffect(() => {
     if (cx) {
-      console.log(cv, cx);
       actualizar();
       cv.onmousedown = function (event) {
         if (event.button === 0) {
@@ -102,17 +97,26 @@ const CanvasView = (props) => {
     clases.push({
       x: 10,
       y: 10,
-      width: 80,
-      height: 50,
+      width: widthClass(attributes, name),
+      height: 22 + 16 * attributes.length,
       color: "green",
       name: `${name}`,
       attributes: attributes,
     });
   };
+  const widthClass = (attributes, name) => {
+    let max = 0;
+    attributes.forEach((element) => {
+      if (element.length > max) {
+        max = element.length;
+      }
+    });
+    return max * 7.5 > name.length * 12 ? max * 7.5 : name.length * 12;
+  };
+
   const handleNewClass = (e) => {
     e.preventDefault();
     const { nombre, atributesList } = e.target.elements;
-    console.log(nombre.value, atributesList, e);
     if (allGood) {
       let attributes = atributesList.children;
       let attributesValues = [];
@@ -172,6 +176,13 @@ const CanvasView = (props) => {
                 ADD
               </button>
             </fieldset>
+            <Button
+              action={() => {
+                closeModal();
+              }}
+            >
+              CANCELAR
+            </Button>
             <input
               type="submit"
               value="CREAR CLASE"
