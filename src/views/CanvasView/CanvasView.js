@@ -15,6 +15,8 @@ const CanvasView = (props) => {
   const [inicioY, setInicioY] = useState(0);
   const [cv, setCv] = useState(document.getElementById("canvas"));
   const [cx, setCx] = useState();
+  const [atributos, setAtributos] = useState([]);
+  const [allGood, setAllGood] = useState(false);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
   var objetoActual = null;
@@ -39,6 +41,14 @@ const CanvasView = (props) => {
       cx.moveTo(clases[i].x, clases[i].y + 24);
       cx.lineTo(clases[i].x + clases[i].width, clases[i].y + 24);
       cx.stroke();
+      console.log(clases[i].attributes);
+      let aumento = 40;
+      cx.font = "16px Arial";
+      cx.strokeStyle = "black";
+      clases[i].attributes.forEach((element) => {
+        cx.fillText(element, clases[i].x + 2, clases[i].y + aumento);
+        aumento += 21;
+      });
     }
   }
   useEffect(() => {
@@ -88,7 +98,7 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const dibujar = (name) => {
+  const dibujar = (name, attributes) => {
     clases.push({
       x: 10,
       y: 10,
@@ -96,14 +106,27 @@ const CanvasView = (props) => {
       height: 50,
       color: "green",
       name: `${name}`,
+      attributes: attributes,
     });
   };
   const handleNewClass = (e) => {
     e.preventDefault();
-    const { nombre } = e.target.elements;
-    console.log(nombre.value);
-    dibujar(nombre.value);
+    const { nombre, atributesList } = e.target.elements;
+    console.log(nombre.value, atributesList, e);
+    if (allGood) {
+      let attributes = atributesList.children;
+      let attributesValues = [];
+      for (var i = 0; i < attributes.length; i++) {
+        if (attributes[i].className === "attribute") {
+          attributesValues.push(attributes[i].value);
+        }
+      }
+      dibujar(nombre.value, attributesValues);
+      closeModal();
+      setAllGood(false);
+    }
   };
+
   return (
     <>
       <WrapperView>
@@ -116,25 +139,47 @@ const CanvasView = (props) => {
         </WrapperDescktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
-          <form onSubmit={handleNewClass}>
+          <form onSubmit={handleNewClass} id="formClass">
             <label>
               Nombre:
               <input
                 type="text"
                 placeholder="Nombre de la clase"
                 name="nombre"
+                required={true}
               />
             </label>
-            <input type="submit" value="CREAR CLASE" onClick={closeModal} />
+            <br></br>
+            <fieldset id="atributos" name="atributesList">
+              <legend>Atributos:</legend>
+              <input
+                type="text"
+                id="inputAtributo"
+                placeholder="Nuevo atributo"
+              />
+              <button
+                onClick={() => {
+                  const form = document.getElementById("atributos");
+                  const val = document.createElement("input");
+                  val.disabled = true;
+                  val.className = "attribute";
+                  val.value = document.getElementById("inputAtributo").value;
+                  const br = document.createElement("br");
+                  form.appendChild(br);
+                  form.appendChild(val);
+                }}
+              >
+                ADD
+              </button>
+            </fieldset>
+            <input
+              type="submit"
+              value="CREAR CLASE"
+              onClick={() => {
+                setAllGood(true);
+              }}
+            />
           </form>
-          {/* <Button
-            action={() => {
-              
-              closeModal();
-            }}
-          >
-            CREAR
-          </Button> */}
         </Modal>
       </WrapperView>
     </>
