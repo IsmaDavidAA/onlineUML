@@ -7,6 +7,8 @@ import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
+import { calculator } from "./Calculator";
+import { actions } from "./ClassEnum";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [clases, setClases] = useState([]);
@@ -17,6 +19,7 @@ const CanvasView = (props) => {
   const [allGood, setAllGood] = useState(false);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
+  const [action, setAction] = useState(actions.CREATION);
   var objetoActual = null;
 
   function actualizar() {
@@ -48,17 +51,23 @@ const CanvasView = (props) => {
       });
     }
   }
+
   useEffect(() => {
     setCv(document.getElementById("canvas"));
   }, []);
+
   useEffect(() => {
     if (cv) {
       setCx(cv.getContext("2d"));
     }
   }, [cv]);
+
   useEffect(() => {
     if (cx) {
       actualizar();
+      document.oncontextmenu = function () {
+        return false;
+      };
       cv.onmousedown = function (event) {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
@@ -74,6 +83,8 @@ const CanvasView = (props) => {
               break;
             }
           }
+        } else {
+          setAction(actions.CREATION);
         }
       };
 
@@ -97,21 +108,12 @@ const CanvasView = (props) => {
     clases.push({
       x: 10,
       y: 10,
-      width: widthClass(attributes, name),
-      height: 22 + 16 * attributes.length,
+      width: calculator.calculateWidthClass(attributes, name),
+      height: calculator.calculateHeightClass(attributes, name),
       color: "green",
       name: `${name}`,
       attributes: attributes,
     });
-  };
-  const widthClass = (attributes, name) => {
-    let max = 0;
-    attributes.forEach((element) => {
-      if (element.length > max) {
-        max = element.length;
-      }
-    });
-    return max * 7.5 > name.length * 12 ? max * 7.5 : name.length * 12;
   };
 
   const handleNewClass = (e) => {
@@ -136,7 +138,10 @@ const CanvasView = (props) => {
       <WrapperView>
         <Header title={"CANVAS"} />
         <WrapperDescktop>
-          <DashBoard color="#A6AFFF" action={openModal}></DashBoard>
+          <DashBoard
+            color="#A6AFFF"
+            action={[setAction, openModal]}
+          ></DashBoard>
           <WrapperCanvas>
             <Canvas height={550} width={900}></Canvas>
           </WrapperCanvas>
