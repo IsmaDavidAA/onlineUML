@@ -41,11 +41,24 @@ const CanvasView = (props) => {
       cx.beginPath();
       cx.moveTo(clases[i].x, clases[i].y + 24);
       cx.lineTo(clases[i].x + clases[i].width, clases[i].y + 24);
+      if (clases[i].separatorLine) {
+        cx.moveTo(clases[i].x, clases[i].y + clases[i].separatorLine);
+        cx.lineTo(
+          clases[i].x + clases[i].width,
+          clases[i].y + clases[i].separatorLine
+        );
+      }
       cx.stroke();
       let aumento = 36;
       cx.font = "12px Arial";
       cx.strokeStyle = "black";
+      // eslint-disable-next-line no-loop-func
       clases[i].attributes.forEach((element) => {
+        cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
+        aumento += 15;
+      });
+      // eslint-disable-next-line no-loop-func
+      clases[i].methods.forEach((element) => {
         cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
         aumento += 15;
       });
@@ -65,9 +78,9 @@ const CanvasView = (props) => {
   useEffect(() => {
     if (cx) {
       actualizar();
-      document.oncontextmenu = function () {
-        return false;
-      };
+      // document.oncontextmenu = function () {
+      //   return false;
+      // };
       cv.onmousedown = function (event) {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
@@ -104,21 +117,23 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const dibujar = (name, attributes) => {
+  const dibujar = (name, attributes, methods) => {
     clases.push({
       x: 10,
       y: 10,
-      width: calculator.calculateWidthClass(attributes, name),
-      height: calculator.calculateHeightClass(attributes, name),
+      width: calculator.calculateWidthClass(methods, attributes, name),
+      height: calculator.calculateHeightClass(attributes, methods),
+      separatorLine: calculator.calculateSeparatorLine(methods, attributes),
       color: "green",
       name: `${name}`,
       attributes: attributes,
+      methods: methods,
     });
   };
 
   const handleNewClass = (e) => {
     e.preventDefault();
-    const { nombre, atributesList } = e.target.elements;
+    const { nombre, atributesList, methodsList } = e.target.elements;
     if (allGood) {
       let attributes = atributesList.children;
       let attributesValues = [];
@@ -127,7 +142,14 @@ const CanvasView = (props) => {
           attributesValues.push(attributes[i].value);
         }
       }
-      dibujar(nombre.value, attributesValues);
+      let methods = methodsList.children;
+      let methodsValues = [];
+      for (var i = 0; i < methods.length; i++) {
+        if (methods[i].className === "method") {
+          methodsValues.push(methods[i].value);
+        }
+      }
+      dibujar(nombre.value, attributesValues, methodsValues);
       closeModal();
       setAllGood(false);
     }
@@ -173,6 +195,25 @@ const CanvasView = (props) => {
                   val.disabled = true;
                   val.className = "attribute";
                   val.value = document.getElementById("inputAtributo").value;
+                  const br = document.createElement("br");
+                  form.appendChild(br);
+                  form.appendChild(val);
+                }}
+              >
+                ADD
+              </button>
+            </fieldset>
+            <br></br>
+            <fieldset id="methods" name="methodsList">
+              <legend>Metodos:</legend>
+              <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
+              <button
+                onClick={() => {
+                  const form = document.getElementById("methods");
+                  const val = document.createElement("input");
+                  val.disabled = true;
+                  val.className = "method";
+                  val.value = document.getElementById("inputMethod").value;
                   const br = document.createElement("br");
                   form.appendChild(br);
                   form.appendChild(val);
