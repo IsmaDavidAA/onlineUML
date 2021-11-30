@@ -1,5 +1,5 @@
 export const actions = {
-  CREATION: "creation",
+  NONE: "none",
   DEPENDENCY: "dependency",
   INHERITANCE: "inheritance",
 };

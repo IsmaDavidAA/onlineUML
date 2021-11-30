@@ -85,41 +85,25 @@ const CanvasView = (props) => {
       cv.onmousedown = (event) => {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
-            if (
-              clases[i].x < event.clientX - HORIZONTAL &&
-              clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-              clases[i].y < event.clientY - VERTICAL &&
-              clases[i].height + clases[i].y > event.clientY - VERTICAL
-            ) {
+            if (isItOverClass(i, event)) {
               clases[i].color = "blue";
             } else {
             }
           }
         } else {
-          setAction(actions.CREATION);
+          setAction(actions.NONE);
         }
         actualizar();
       };
 
       cv.onmousemove = function (event) {
-        for (var i = 0; i < clases.length; i++) {
-          if (
-            clases[i].x < event.clientX - HORIZONTAL &&
-            clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-            clases[i].y < event.clientY - VERTICAL &&
-            clases[i].height + clases[i].y > event.clientY - VERTICAL
-          ) {
-            event.target.style.cursor = "pointer";
-          } else {
-            event.target.style.cursor = "default";
-          }
-        }
+        onMouseMoveSelectClass(event);
       };
 
       cv.onmouseup = function (event) {
         objetoActual = null;
       };
-    } else if (cx && action === actions.CREATION) {
+    } else if (cx && action === actions.NONE) {
       actualizar();
       cv.oncontextmenu = function () {
         return false;
@@ -127,12 +111,7 @@ const CanvasView = (props) => {
       cv.onmousedown = (event) => {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
-            if (
-              clases[i].x < event.clientX - HORIZONTAL &&
-              clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-              clases[i].y < event.clientY - VERTICAL &&
-              clases[i].height + clases[i].y > event.clientY - VERTICAL
-            ) {
+            if (isItOverClass(i, event)) {
               objetoActual = clases[i];
               setInicioY(event.clientY - clases[i].y - VERTICAL);
               setInicioX(event.clientX - clases[i].x - HORIZONTAL);
@@ -143,12 +122,14 @@ const CanvasView = (props) => {
       };
 
       cv.onmousemove = function (event) {
+        onMouseMoveSelectClass(event);
         if (objetoActual != null) {
           objetoActual.x =
             event.clientX - inicioX - HORIZONTAL - objetoActual.width / 2;
           objetoActual.y =
             event.clientY - inicioY - VERTICAL - objetoActual.height / 2;
         }
+
         actualizar();
       };
 
@@ -158,9 +139,26 @@ const CanvasView = (props) => {
     }
   }, [action]);
 
+  const onMouseMoveSelectClass = (event) => {
+    for (var i = 0; i < clases.length; i++) {
+      if (isItOverClass(i, event)) {
+        event.target.style.cursor = "pointer";
+      } else {
+        event.target.style.cursor = "default";
+      }
+    }
+  };
+  const isItOverClass = (i, event) => {
+    return (
+      clases[i].x < event.clientX - HORIZONTAL &&
+      clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
+      clases[i].y < event.clientY - VERTICAL &&
+      clases[i].height + clases[i].y > event.clientY - VERTICAL
+    );
+  };
   useEffect(() => {
     if (cx) {
-      setAction(actions.CREATION);
+      setAction(actions.NONE);
     }
   }, [cx]);
 
