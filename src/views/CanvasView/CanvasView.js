@@ -12,16 +12,15 @@ import { actions } from "./ClassEnum";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [clases, setClases] = useState([]);
-  const [inicioX, setInicioX] = useState(0);
-  const [inicioY, setInicioY] = useState(0);
   const [cv, setCv] = useState(document.getElementById("canvas"));
   const [cx, setCx] = useState();
   const [allGood, setAllGood] = useState(false);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
   const [action, setAction] = useState(null);
-  var objetoActual = null;
-
+  var currentClass = null;
+  var fromClass = null;
+  var toClass = null;
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
     cx.fillRect(0, 0, 900, 550);
@@ -63,6 +62,20 @@ const CanvasView = (props) => {
         cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
         aumento += 15;
       });
+
+      if (clases[i].inheritances !== undefined) {
+        linesInheritanceGenerate(i);
+      }
+    }
+  }
+
+  function linesInheritanceGenerate(i) {
+    cx.beginPath();
+    for (var j = 0; j < clases[i].inheritances.length; j++) {
+      cx.moveTo(clases[i].x, clases[i].y);
+      cx.lineTo(clases[i].inheritances[j].x, clases[i].inheritances[j].y);
+      cx.strokeStyle = clases[i].inheritances[j].color;
+      cx.stroke();
     }
   }
 
@@ -86,8 +99,15 @@ const CanvasView = (props) => {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
             if (isItOverClass(i, event)) {
-              clases[i].color = "blue";
-            } else {
+              if (!fromClass) {
+                clases[i].color = "blue";
+                fromClass = clases[i];
+              } else if (!toClass && fromClass !== clases[i]) {
+                fromClass.inheritances = [clases[i]];
+                setAction(actions.NONE);
+                toClass = null;
+                fromClass = null;
+              }
             }
           }
         } else {
@@ -101,7 +121,7 @@ const CanvasView = (props) => {
       };
 
       cv.onmouseup = function (event) {
-        objetoActual = null;
+        currentClass = null;
       };
     } else if (cx && action === actions.NONE) {
       resetColor();
@@ -114,9 +134,7 @@ const CanvasView = (props) => {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
             if (isItOverClass(i, event)) {
-              objetoActual = clases[i];
-              setInicioY(event.clientY - clases[i].y - VERTICAL);
-              setInicioX(event.clientX - clases[i].x - HORIZONTAL);
+              currentClass = clases[i];
               break;
             }
           }
@@ -125,16 +143,16 @@ const CanvasView = (props) => {
 
       cv.onmousemove = function (event) {
         onMouseMoveSelectClass(event);
-        if (objetoActual != null) {
-          objetoActual.x = event.clientX - HORIZONTAL - objetoActual.width / 2;
-          objetoActual.y = event.clientY - VERTICAL - objetoActual.height / 2;
+        if (currentClass != null) {
+          currentClass.x = event.clientX - HORIZONTAL - currentClass.width / 2;
+          currentClass.y = event.clientY - VERTICAL - currentClass.height / 2;
         }
 
         actualizar();
       };
 
       cv.onmouseup = function (event) {
-        objetoActual = null;
+        currentClass = null;
       };
     }
   }, [action]);
@@ -150,14 +168,6 @@ const CanvasView = (props) => {
     }
   };
   const isItOverClass = (i, event) => {
-    console.log(
-      i,
-      event,
-      clases[i].x < event.clientX - HORIZONTAL &&
-        clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-        clases[i].y < event.clientY - VERTICAL &&
-        clases[i].height + clases[i].y > event.clientY - VERTICAL
-    );
     return (
       clases[i].x < event.clientX - HORIZONTAL &&
       clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
@@ -182,6 +192,8 @@ const CanvasView = (props) => {
       color: "black",
       attributes: attributes,
       methods: methods,
+      inheritances: [],
+      dependencies: [],
     });
   };
 
