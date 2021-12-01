@@ -126,10 +126,8 @@ const CanvasView = (props) => {
       cv.onmousemove = function (event) {
         onMouseMoveSelectClass(event);
         if (objetoActual != null) {
-          objetoActual.x =
-            event.clientX - inicioX - HORIZONTAL - objetoActual.width / 2;
-          objetoActual.y =
-            event.clientY - inicioY - VERTICAL - objetoActual.height / 2;
+          objetoActual.x = event.clientX - HORIZONTAL - objetoActual.width / 2;
+          objetoActual.y = event.clientY - VERTICAL - objetoActual.height / 2;
         }
 
         actualizar();
@@ -145,12 +143,21 @@ const CanvasView = (props) => {
     for (var i = 0; i < clases.length; i++) {
       if (isItOverClass(i, event)) {
         event.target.style.cursor = "pointer";
+        break;
       } else {
         event.target.style.cursor = "default";
       }
     }
   };
   const isItOverClass = (i, event) => {
+    console.log(
+      i,
+      event,
+      clases[i].x < event.clientX - HORIZONTAL &&
+        clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
+        clases[i].y < event.clientY - VERTICAL &&
+        clases[i].height + clases[i].y > event.clientY - VERTICAL
+    );
     return (
       clases[i].x < event.clientX - HORIZONTAL &&
       clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
