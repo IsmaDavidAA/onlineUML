@@ -104,7 +104,9 @@ const CanvasView = (props) => {
         objetoActual = null;
       };
     } else if (cx && action === actions.NONE) {
+      resetColor();
       actualizar();
+
       cv.oncontextmenu = function () {
         return false;
       };
@@ -162,7 +164,7 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const dibujar = (name, attributes, methods) => {
+  const addClass = (name, attributes, methods) => {
     clases.push({
       x: 10,
       y: 10,
@@ -174,6 +176,12 @@ const CanvasView = (props) => {
       attributes: attributes,
       methods: methods,
     });
+  };
+
+  const resetColor = () => {
+    for (var i = 0; i < clases.length; i++) {
+      clases[i].color = "black";
+    }
   };
 
   const handleNewClass = (e) => {
@@ -194,7 +202,7 @@ const CanvasView = (props) => {
           methodsValues.push(methods[i].value);
         }
       }
-      dibujar(nombre.value, attributesValues, methodsValues);
+      addClass(nombre.value, attributesValues, methodsValues);
       closeModal();
       setAllGood(false);
     }
