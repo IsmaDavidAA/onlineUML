@@ -19,7 +19,7 @@ const CanvasView = (props) => {
   const [allGood, setAllGood] = useState(false);
   const VERTICAL = 50;
   const HORIZONTAL = 120;
-  const [action, setAction] = useState(actions.CREATION);
+  const [action, setAction] = useState(null);
   var objetoActual = null;
 
   function actualizar() {
@@ -28,7 +28,7 @@ const CanvasView = (props) => {
     for (var i = 0; i < clases.length; i++) {
       cx.font = "20px Arial";
       cx.fillStyle = "white";
-      cx.strokeStyle = "black";
+      cx.strokeStyle = clases[i].color;
       cx.strokeRect(
         clases[i].x,
         clases[i].y,
@@ -48,6 +48,7 @@ const CanvasView = (props) => {
           clases[i].y + clases[i].separatorLine
         );
       }
+      cx.strokeStyle = clases[i].color;
       cx.stroke();
       let aumento = 36;
       cx.font = "12px Arial";
@@ -76,44 +77,88 @@ const CanvasView = (props) => {
   }, [cv]);
 
   useEffect(() => {
-    if (cx) {
+    if (cx && action === actions.INHERITANCE) {
       actualizar();
-      // document.oncontextmenu = function () {
-      //   return false;
-      // };
-      cv.onmousedown = function (event) {
+      cv.oncontextmenu = function () {
+        return false;
+      };
+      cv.onmousedown = (event) => {
         if (event.button === 0) {
           for (var i = 0; i < clases.length; i++) {
-            if (
-              clases[i].x < event.clientX - HORIZONTAL &&
-              clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-              clases[i].y < event.clientY - VERTICAL &&
-              clases[i].height + clases[i].y > event.clientY - VERTICAL
-            ) {
+            if (isItOverClass(i, event)) {
+              clases[i].color = "blue";
+            } else {
+            }
+          }
+        } else {
+          setAction(actions.NONE);
+        }
+        actualizar();
+      };
+
+      cv.onmousemove = function (event) {
+        onMouseMoveSelectClass(event);
+      };
+
+      cv.onmouseup = function (event) {
+        objetoActual = null;
+      };
+    } else if (cx && action === actions.NONE) {
+      actualizar();
+      cv.oncontextmenu = function () {
+        return false;
+      };
+      cv.onmousedown = (event) => {
+        if (event.button === 0) {
+          for (var i = 0; i < clases.length; i++) {
+            if (isItOverClass(i, event)) {
               objetoActual = clases[i];
               setInicioY(event.clientY - clases[i].y - VERTICAL);
               setInicioX(event.clientX - clases[i].x - HORIZONTAL);
               break;
             }
           }
-        } else {
-          setAction(actions.CREATION);
         }
       };
 
       cv.onmousemove = function (event) {
+        onMouseMoveSelectClass(event);
         if (objetoActual != null) {
           objetoActual.x =
             event.clientX - inicioX - HORIZONTAL - objetoActual.width / 2;
           objetoActual.y =
             event.clientY - inicioY - VERTICAL - objetoActual.height / 2;
         }
+
         actualizar();
       };
 
       cv.onmouseup = function (event) {
         objetoActual = null;
       };
+    }
+  }, [action]);
+
+  const onMouseMoveSelectClass = (event) => {
+    for (var i = 0; i < clases.length; i++) {
+      if (isItOverClass(i, event)) {
+        event.target.style.cursor = "pointer";
+      } else {
+        event.target.style.cursor = "default";
+      }
+    }
+  };
+  const isItOverClass = (i, event) => {
+    return (
+      clases[i].x < event.clientX - HORIZONTAL &&
+      clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
+      clases[i].y < event.clientY - VERTICAL &&
+      clases[i].height + clases[i].y > event.clientY - VERTICAL
+    );
+  };
+  useEffect(() => {
+    if (cx) {
+      setAction(actions.NONE);
     }
   }, [cx]);
 
@@ -124,8 +169,8 @@ const CanvasView = (props) => {
       width: calculator.calculateWidthClass(methods, attributes, name),
       height: calculator.calculateHeightClass(attributes, methods),
       separatorLine: calculator.calculateSeparatorLine(methods, attributes),
-      color: "green",
       name: `${name}`,
+      color: "black",
       attributes: attributes,
       methods: methods,
     });
