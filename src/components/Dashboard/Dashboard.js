@@ -1,20 +1,20 @@
 import React from "react";
-import { actions } from "../../views/CanvasView/ClassEnum";
+import { relations } from "../../Relations";
 import Button from "../Button/Button";
 import Space from "../Space/Space";
 import { WrapperDashboard } from "./Dashboard.styles";
 const DashBoard = (props) => {
   return (
     <WrapperDashboard color={props.color}>
-      <Button action={props.action[1]} typeAction={actions.CREATION}>
+      <Button action={props.action[1]} typeAction={relations.CREATION}>
         CLASE
       </Button>
       <Space h={10} w={10} />
-      <Button action={props.action[0]} typeAction={actions.INHERITANCE}>
+      <Button action={props.action[0]} typeAction={relations.INHERITANCE}>
         HERENCIA
       </Button>
       <Space h={10} w={10} />
-      <Button action={props.action[0]} typeAction={actions.DEPENDENCY}>
+      <Button action={props.action[0]} typeAction={relations.DEPENDENCY}>
         DEPENDENCIA
       </Button>
     </WrapperDashboard>

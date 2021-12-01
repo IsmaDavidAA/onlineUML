@@ -7,8 +7,8 @@ import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
-import { calculator } from "./Calculator";
-import { actions } from "./ClassEnum";
+import { calculator } from "../../utils/Calculator.js";
+import { relations } from "../../Relations";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [clases, setClases] = useState([]);
@@ -90,7 +90,7 @@ const CanvasView = (props) => {
   }, [cv]);
 
   useEffect(() => {
-    if (cx && action === actions.INHERITANCE) {
+    if (cx && action === relations.INHERITANCE) {
       actualizar();
       cv.oncontextmenu = function () {
         return false;
@@ -104,14 +104,14 @@ const CanvasView = (props) => {
                 fromClass = clases[i];
               } else if (!toClass && fromClass !== clases[i]) {
                 fromClass.inheritances = [clases[i]];
-                setAction(actions.NONE);
+                setAction(relations.NONE);
                 toClass = null;
                 fromClass = null;
               }
             }
           }
         } else {
-          setAction(actions.NONE);
+          setAction(relations.NONE);
         }
         actualizar();
       };
@@ -123,7 +123,7 @@ const CanvasView = (props) => {
       cv.onmouseup = function (event) {
         currentClass = null;
       };
-    } else if (cx && action === actions.NONE) {
+    } else if (cx && action === relations.NONE) {
       resetColor();
       actualizar();
 
@@ -177,7 +177,7 @@ const CanvasView = (props) => {
   };
   useEffect(() => {
     if (cx) {
-      setAction(actions.NONE);
+      setAction(relations.NONE);
     }
   }, [cx]);
 
