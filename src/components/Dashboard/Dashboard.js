@@ -6,7 +6,7 @@ import { WrapperDashboard } from "./Dashboard.styles";
 const DashBoard = (props) => {
   return (
     <WrapperDashboard color={props.color}>
-      <Button action={props.action[1]} typeAction={relations.CREATION}>
+      <Button action={props.action[1]} typeAction={relations.NONE}>
         CLASE
       </Button>
       <Space h={10} w={10} />

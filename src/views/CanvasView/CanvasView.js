@@ -20,7 +20,7 @@ const CanvasView = (props) => {
   const [action, setAction] = useState(null);
   var currentClass = null;
   var fromClass = null;
-  var toClass = null;
+
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
     cx.fillRect(0, 0, 900, 550);
@@ -72,8 +72,11 @@ const CanvasView = (props) => {
   function linesInheritanceGenerate(i) {
     cx.beginPath();
     for (var j = 0; j < clases[i].inheritances.length; j++) {
-      cx.moveTo(clases[i].x, clases[i].y);
-      cx.lineTo(clases[i].inheritances[j].x, clases[i].inheritances[j].y);
+      cx.moveTo(clases[i].x + clases[i].width / 2, clases[i].y);
+      cx.lineTo(
+        clases[i].inheritances[j].x + clases[i].inheritances[j].width / 2,
+        clases[i].inheritances[j].y + clases[i].inheritances[j].height
+      );
       cx.strokeStyle = clases[i].inheritances[j].color;
       cx.stroke();
     }
@@ -102,10 +105,9 @@ const CanvasView = (props) => {
               if (!fromClass) {
                 clases[i].color = "blue";
                 fromClass = clases[i];
-              } else if (!toClass && fromClass !== clases[i]) {
+              } else if (fromClass !== clases[i]) {
                 fromClass.inheritances = [clases[i]];
                 setAction(relations.NONE);
-                toClass = null;
                 fromClass = null;
               }
             }
@@ -154,6 +156,7 @@ const CanvasView = (props) => {
       cv.onmouseup = function (event) {
         currentClass = null;
       };
+    } else if (cx && action === relations.DEPENDENCY) {
     }
   }, [action]);
 
