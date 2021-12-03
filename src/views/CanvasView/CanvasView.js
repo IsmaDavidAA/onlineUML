@@ -196,7 +196,7 @@ const CanvasView = (props) => {
       }
     });
   };
-  
+
   useEffect(() => {
     if (cx) {
       setAction(relations.NONE);
@@ -284,14 +284,23 @@ const CanvasView = (props) => {
               />
               <button
                 onClick={() => {
+                  let inputValue =
+                    document.getElementById("inputAtributo").value;
                   const form = document.getElementById("atributos");
-                  const val = document.createElement("input");
-                  val.disabled = true;
-                  val.className = "attribute";
-                  val.value = document.getElementById("inputAtributo").value;
-                  const br = document.createElement("br");
-                  form.appendChild(br);
-                  form.appendChild(val);
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "attribute",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    val.disabled = true;
+                    val.className = "attribute";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
                 }}
               >
                 ADD
@@ -302,15 +311,24 @@ const CanvasView = (props) => {
               <legend>Metodos:</legend>
               <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
               <button
-                onClick={() => {
+                onClick={(event) => {
+                  let inputValue = document.getElementById("inputMethod").value;
                   const form = document.getElementById("methods");
-                  const val = document.createElement("input");
-                  val.disabled = true;
-                  val.className = "method";
-                  val.value = document.getElementById("inputMethod").value;
-                  const br = document.createElement("br");
-                  form.appendChild(br);
-                  form.appendChild(val);
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "method",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    console.log(val);
+                    val.disabled = true;
+                    val.className = "method";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
                 }}
               >
                 ADD

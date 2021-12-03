@@ -36,4 +36,10 @@ export const calculator = {
       value.height + value.y > event.clientY - VERTICAL
     );
   },
+
+  existOnInputList: (list, type, input) => {
+    return [...list].some(
+      (element) => element.className === type && element.value === input
+    );
+  },
 };
