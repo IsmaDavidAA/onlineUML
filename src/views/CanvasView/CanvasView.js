@@ -228,7 +228,10 @@ const CanvasView = (props) => {
   const handleNewClass = (e) => {
     e.preventDefault();
     const { nombre, atributesList, methodsList } = e.target.elements;
-    if (allGood) {
+    const exists = [...classes].some((value) => {
+      return value[1].name === nombre.value;
+    });
+    if (allGood && !exists) {
       let attributes = atributesList.children;
       let attributesValues = [];
       for (var i = 0; i < attributes.length; i++) {
