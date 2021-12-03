@@ -1,3 +1,4 @@
+import { HORIZONTAL, VERTICAL } from "../Constants";
 export const calculator = {
   calculateHeightClass: (attributes, methods) => {
     return 22 + 16 * attributes.length + 16 * methods.length;
@@ -19,5 +20,20 @@ export const calculator = {
 
   calculateSeparatorLine: (methods, attributes) => {
     return methods?.length > 0 ? 22 + 16 * attributes.length : null;
+  },
+
+  generateID: () => {
+    return (
+      Date.now().toString(36) + Math.random().toString(36).substr(2)
+    ).toUpperCase();
+  },
+
+  isItOverClass: (value, event) => {
+    return (
+      value.x < event.clientX - HORIZONTAL &&
+      value.width + value.x > event.clientX - HORIZONTAL &&
+      value.y < event.clientY - VERTICAL &&
+      value.height + value.y > event.clientY - VERTICAL
+    );
   },
 };

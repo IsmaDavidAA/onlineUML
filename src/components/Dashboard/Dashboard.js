@@ -1,5 +1,5 @@
 import React from "react";
-import { relations } from "../../Relations";
+import { relations } from "../../Constants";
 import Button from "../Button/Button";
 import Space from "../Space/Space";
 import { WrapperDashboard } from "./Dashboard.styles";
