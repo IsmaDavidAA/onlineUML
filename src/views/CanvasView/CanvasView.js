@@ -8,76 +8,82 @@ import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
-import { relations } from "../../Relations";
+import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
+
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
-  const [clases, setClases] = useState([]);
-  const [cv, setCv] = useState(document.getElementById("canvas"));
+  const [classes, setClasses] = useState(new Map([]));
+  const [cv, setCv] = useState();
   const [cx, setCx] = useState();
   const [allGood, setAllGood] = useState(false);
-  const VERTICAL = 50;
-  const HORIZONTAL = 120;
   const [action, setAction] = useState(null);
   var currentClass = null;
   var fromClass = null;
-  var toClass = null;
+
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
     cx.fillRect(0, 0, 900, 550);
-    for (var i = 0; i < clases.length; i++) {
+    classes.forEach((value, key) => {
       cx.font = "20px Arial";
       cx.fillStyle = "white";
-      cx.strokeStyle = clases[i].color;
-      cx.strokeRect(
-        clases[i].x,
-        clases[i].y,
-        clases[i].width,
-        clases[i].height
-      );
-
+      cx.strokeStyle = value.color;
+      cx.strokeRect(value.x, value.y, value.width, value.height);
       cx.fillStyle = "black";
-      cx.fillText(clases[i].name, clases[i].x + 1, clases[i].y + 20);
+      cx.fillText(value.name, value.x + 1, value.y + 20);
       cx.beginPath();
-      cx.moveTo(clases[i].x, clases[i].y + 24);
-      cx.lineTo(clases[i].x + clases[i].width, clases[i].y + 24);
-      if (clases[i].separatorLine) {
-        cx.moveTo(clases[i].x, clases[i].y + clases[i].separatorLine);
-        cx.lineTo(
-          clases[i].x + clases[i].width,
-          clases[i].y + clases[i].separatorLine
-        );
+      cx.moveTo(value.x, value.y + 24);
+      cx.lineTo(value.x + value.width, value.y + 24);
+      if (value.separatorLine) {
+        cx.moveTo(value.x, value.y + value.separatorLine);
+        cx.lineTo(value.x + value.width, value.y + value.separatorLine);
       }
-      cx.strokeStyle = clases[i].color;
+      cx.strokeStyle = value.color;
       cx.stroke();
       let aumento = 36;
       cx.font = "12px Arial";
       cx.strokeStyle = "black";
-      // eslint-disable-next-line no-loop-func
-      clases[i].attributes.forEach((element) => {
-        cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
+      value.attributes.forEach((element) => {
+        cx.fillText(element, value.x + 1, value.y + aumento);
         aumento += 15;
       });
       // eslint-disable-next-line no-loop-func
-      clases[i].methods.forEach((element) => {
-        cx.fillText(element, clases[i].x + 1, clases[i].y + aumento);
+      value.methods.forEach((element) => {
+        cx.fillText(element, value.x + 1, value.y + aumento);
         aumento += 15;
       });
 
-      if (clases[i].inheritances !== undefined) {
-        linesInheritanceGenerate(i);
+      if (value.inheritances !== undefined) {
+        linesInheritanceGenerate(value);
       }
-    }
+      if (value.dependencies !== undefined) {
+        linesDependenciesGenerate(value);
+      }
+    });
   }
-
-  function linesInheritanceGenerate(i) {
-    cx.beginPath();
-    for (var j = 0; j < clases[i].inheritances.length; j++) {
-      cx.moveTo(clases[i].x, clases[i].y);
-      cx.lineTo(clases[i].inheritances[j].x, clases[i].inheritances[j].y);
-      cx.strokeStyle = clases[i].inheritances[j].color;
+  const linesDependenciesGenerate = (value) => {
+    value.dependencies.forEach((dependencyKey) => {
+      cx.beginPath();
+      cx.moveTo(value.x + value.width / 2, value.y);
+      cx.lineTo(
+        classes.get(dependencyKey).x + classes.get(dependencyKey).width / 2,
+        classes.get(dependencyKey).y + classes.get(dependencyKey).height
+      );
+      cx.strokeStyle = "black";
       cx.stroke();
-    }
-  }
+    });
+  };
+  const linesInheritanceGenerate = (value) => {
+    cx.beginPath();
+    value.inheritances.forEach((inheritanceKey) => {
+      cx.moveTo(value.x + value.width / 2, value.y);
+      cx.lineTo(
+        classes.get(inheritanceKey).x + classes.get(inheritanceKey).width / 2,
+        classes.get(inheritanceKey).y + classes.get(inheritanceKey).height
+      );
+      cx.strokeStyle = "black";
+      cx.stroke();
+    });
+  };
 
   useEffect(() => {
     setCv(document.getElementById("canvas"));
@@ -97,19 +103,18 @@ const CanvasView = (props) => {
       };
       cv.onmousedown = (event) => {
         if (event.button === 0) {
-          for (var i = 0; i < clases.length; i++) {
-            if (isItOverClass(i, event)) {
+          classes.forEach((value, key) => {
+            if (calculator.isItOverClass(value, event)) {
               if (!fromClass) {
-                clases[i].color = "blue";
-                fromClass = clases[i];
-              } else if (!toClass && fromClass !== clases[i]) {
-                fromClass.inheritances = [clases[i]];
+                value.color = "blue";
+                fromClass = key;
+              } else if (fromClass !== key) {
+                classes.get(fromClass).inheritances = [key];
                 setAction(relations.NONE);
-                toClass = null;
                 fromClass = null;
               }
             }
-          }
+          });
         } else {
           setAction(relations.NONE);
         }
@@ -118,10 +123,6 @@ const CanvasView = (props) => {
 
       cv.onmousemove = function (event) {
         onMouseMoveSelectClass(event);
-      };
-
-      cv.onmouseup = function (event) {
-        currentClass = null;
       };
     } else if (cx && action === relations.NONE) {
       resetColor();
@@ -132,12 +133,11 @@ const CanvasView = (props) => {
       };
       cv.onmousedown = (event) => {
         if (event.button === 0) {
-          for (var i = 0; i < clases.length; i++) {
-            if (isItOverClass(i, event)) {
-              currentClass = clases[i];
-              break;
+          classes.forEach((value, key) => {
+            if (calculator.isItOverClass(value, event)) {
+              currentClass = value;
             }
-          }
+          });
         }
       };
 
@@ -147,34 +147,56 @@ const CanvasView = (props) => {
           currentClass.x = event.clientX - HORIZONTAL - currentClass.width / 2;
           currentClass.y = event.clientY - VERTICAL - currentClass.height / 2;
         }
-
         actualizar();
       };
 
       cv.onmouseup = function (event) {
         currentClass = null;
       };
+    } else if (cx && action === relations.DEPENDENCY) {
+      actualizar();
+      cv.oncontextmenu = function () {
+        return false;
+      };
+      cv.onmousedown = (event) => {
+        if (event.button === 0) {
+          classes.forEach((value, key) => {
+            if (calculator.isItOverClass(value, event)) {
+              if (!fromClass) {
+                value.color = "blue";
+                fromClass = key;
+              } else if (fromClass !== key) {
+                console.log(classes.get(fromClass).dependencies);
+                if (!classes.get(fromClass).dependencies.includes(key)) {
+                  classes.get(fromClass).dependencies.push(key);
+                  setAction(relations.NONE);
+                  fromClass = null;
+                }
+              }
+            }
+          });
+        } else {
+          setAction(relations.NONE);
+        }
+        actualizar();
+      };
+
+      cv.onmousemove = function (event) {
+        onMouseMoveSelectClass(event);
+      };
     }
   }, [action]);
 
   const onMouseMoveSelectClass = (event) => {
-    for (var i = 0; i < clases.length; i++) {
-      if (isItOverClass(i, event)) {
+    classes.forEach((value, key) => {
+      if (calculator.isItOverClass(value, event)) {
         event.target.style.cursor = "pointer";
-        break;
       } else {
         event.target.style.cursor = "default";
       }
-    }
+    });
   };
-  const isItOverClass = (i, event) => {
-    return (
-      clases[i].x < event.clientX - HORIZONTAL &&
-      clases[i].width + clases[i].x > event.clientX - HORIZONTAL &&
-      clases[i].y < event.clientY - VERTICAL &&
-      clases[i].height + clases[i].y > event.clientY - VERTICAL
-    );
-  };
+
   useEffect(() => {
     if (cx) {
       setAction(relations.NONE);
@@ -182,7 +204,7 @@ const CanvasView = (props) => {
   }, [cx]);
 
   const addClass = (name, attributes, methods) => {
-    clases.push({
+    classes.set(calculator.generateID(), {
       x: 10,
       y: 10,
       width: calculator.calculateWidthClass(methods, attributes, name),
@@ -198,15 +220,18 @@ const CanvasView = (props) => {
   };
 
   const resetColor = () => {
-    for (var i = 0; i < clases.length; i++) {
-      clases[i].color = "black";
-    }
+    classes.forEach((value, key) => {
+      value.color = "black";
+    });
   };
 
   const handleNewClass = (e) => {
     e.preventDefault();
     const { nombre, atributesList, methodsList } = e.target.elements;
-    if (allGood) {
+    const exists = [...classes].some((value) => {
+      return value[1].name === nombre.value;
+    });
+    if (allGood && !exists) {
       let attributes = atributesList.children;
       let attributesValues = [];
       for (var i = 0; i < attributes.length; i++) {
@@ -262,14 +287,23 @@ const CanvasView = (props) => {
               />
               <button
                 onClick={() => {
+                  let inputValue =
+                    document.getElementById("inputAtributo").value;
                   const form = document.getElementById("atributos");
-                  const val = document.createElement("input");
-                  val.disabled = true;
-                  val.className = "attribute";
-                  val.value = document.getElementById("inputAtributo").value;
-                  const br = document.createElement("br");
-                  form.appendChild(br);
-                  form.appendChild(val);
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "attribute",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    val.disabled = true;
+                    val.className = "attribute";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
                 }}
               >
                 ADD
@@ -280,15 +314,24 @@ const CanvasView = (props) => {
               <legend>Metodos:</legend>
               <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
               <button
-                onClick={() => {
+                onClick={(event) => {
+                  let inputValue = document.getElementById("inputMethod").value;
                   const form = document.getElementById("methods");
-                  const val = document.createElement("input");
-                  val.disabled = true;
-                  val.className = "method";
-                  val.value = document.getElementById("inputMethod").value;
-                  const br = document.createElement("br");
-                  form.appendChild(br);
-                  form.appendChild(val);
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "method",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    console.log(val);
+                    val.disabled = true;
+                    val.className = "method";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
                 }}
               >
                 ADD

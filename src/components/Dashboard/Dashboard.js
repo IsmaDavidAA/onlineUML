@@ -1,12 +1,12 @@
 import React from "react";
-import { relations } from "../../Relations";
+import { relations } from "../../Constants";
 import Button from "../Button/Button";
 import Space from "../Space/Space";
 import { WrapperDashboard } from "./Dashboard.styles";
 const DashBoard = (props) => {
   return (
     <WrapperDashboard color={props.color}>
-      <Button action={props.action[1]} typeAction={relations.CREATION}>
+      <Button action={props.action[1]} typeAction={relations.NONE}>
         CLASE
       </Button>
       <Space h={10} w={10} />
