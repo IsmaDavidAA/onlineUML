@@ -10,6 +10,8 @@ import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
 import Menu from "../../components/Menu/Menu";
+import Input from "../../components/Input/Input";
+import Form from "../../components/Form/Form";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [isOpenModalE, openModalE, closeModalE] = useModal();
@@ -238,34 +240,30 @@ const CanvasView = (props) => {
     });
   };
 
-  const handleNewClass = (e) => {
+  const handleNewClass = (listAttributes, listMethods, e) => {
     e.preventDefault();
-    const { nombre, atributesList, methodsList } = e.target.elements;
+    const { nombre } = e.target.elements;
     const exists = [...classes].some((value) => {
       return value[1].name === nombre.value;
     });
     if (allGood && !exists) {
-      let attributes = atributesList.children;
-      let attributesValues = [];
-      for (var i = 0; i < attributes.length; i++) {
-        if (attributes[i].className === "attribute") {
-          attributesValues.push(attributes[i].value);
-        }
-      }
-      let methods = methodsList.children;
-      let methodsValues = [];
-      for (var i = 0; i < methods.length; i++) {
-        if (methods[i].className === "method") {
-          methodsValues.push(methods[i].value);
-        }
-      }
-      addClass(nombre.value, attributesValues, methodsValues);
+      addClass(nombre.value, listAttributes, listMethods);
       closeModal();
       setAllGood(false);
     }
   };
-  const closeMenu = () => {
-    setVisibleMenu(false);
+
+  const handleEditClass = (listAttributes, listMethods, e) => {
+    e.preventDefault();
+    const { nombre } = e.target.elements;
+    const exists = [...classes].some((value) => {
+      return value[1].name === nombre.value;
+    });
+    if (allGood && !exists) {
+      addClass(nombre.value, listAttributes, listMethods);
+      closeModal();
+      setAllGood(false);
+    }
   };
   return (
     <>
@@ -288,178 +286,21 @@ const CanvasView = (props) => {
         </WrapperDescktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
-          <form onSubmit={handleNewClass} id="formClass">
-            <label>
-              Nombre:
-              <input
-                type="text"
-                placeholder="Nombre de la clase"
-                name="nombre"
-                required={true}
-              />
-            </label>
-            <br></br>
-            <fieldset id="atributos" name="atributesList">
-              <legend>Atributos:</legend>
-              <input
-                type="text"
-                id="inputAtributo"
-                placeholder="Nuevo atributo"
-              />
-              <button
-                onClick={() => {
-                  let inputValue =
-                    document.getElementById("inputAtributo").value;
-                  const form = document.getElementById("atributos");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "attribute",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    val.disabled = true;
-                    val.className = "attribute";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <br></br>
-            <fieldset id="methods" name="methodsList">
-              <legend>Metodos:</legend>
-              <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
-              <button
-                onClick={(event) => {
-                  let inputValue = document.getElementById("inputMethod").value;
-                  const form = document.getElementById("methods");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "method",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    console.log(val);
-                    val.disabled = true;
-                    val.className = "method";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <Button
-              action={() => {
-                closeModal();
-              }}
-            >
-              CANCELAR
-            </Button>
-            <input
-              type="submit"
-              value="CREAR CLASE"
-              onClick={() => {
-                setAllGood(true);
-              }}
-            />
-          </form>
+          <Form
+            handleNewClass={handleNewClass}
+            closeModal={closeModal}
+            setAllGood={setAllGood}
+            id="formClassCreate"
+          />
         </Modal>
         <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
-          <form onSubmit={handleNewClass} id="formClass">
-            <label>
-              Nombre:
-              <input
-                type="text"
-                placeholder="Nombre de la clase"
-                name="nombre"
-                required={true}
-              />
-            </label>
-            <br></br>
-            <fieldset id="atributos" name="atributesList">
-              <legend>Atributos:</legend>
-              <input
-                type="text"
-                id="inputAtributo"
-                placeholder="Nuevo atributo"
-              />
-              <button
-                onClick={() => {
-                  let inputValue =
-                    document.getElementById("inputAtributo").value;
-                  const form = document.getElementById("atributos");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "attribute",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    val.disabled = true;
-                    val.className = "attribute";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <br></br>
-            <fieldset id="methods" name="methodsList">
-              <legend>Metodos:</legend>
-              <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
-              <button
-                onClick={(event) => {
-                  let inputValue = document.getElementById("inputMethod").value;
-                  const form = document.getElementById("methods");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "method",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    console.log(val);
-                    val.disabled = true;
-                    val.className = "method";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <Button
-              action={() => {
-                closeModal();
-              }}
-            >
-              CANCELAR
-            </Button>
-            <input
-              type="submit"
-              value="CREAR CLASE"
-              onClick={() => {
-                setAllGood(true);
-              }}
-            />
-          </form>
+          <p>EDITAR CLASE</p>
+          <Form
+            handleNewClass={handleNewClass}
+            closeModal={closeModal}
+            setAllGood={setAllGood}
+            id="formClassEdit"
+          />
         </Modal>
       </WrapperView>
     </>
