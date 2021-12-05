@@ -9,3 +9,9 @@ export const WrapperCanvas = styled.div`
   background: black;
   flex: auto;
 `;
+
+export const InputList = styled.input`
+
+
+`
+

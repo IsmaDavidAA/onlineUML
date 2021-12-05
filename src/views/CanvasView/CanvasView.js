@@ -9,14 +9,17 @@ import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
-
+import Menu from "../../components/Menu/Menu";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
+  const [isOpenModalE, openModalE, closeModalE] = useModal();
   const [classes, setClasses] = useState(new Map([]));
   const [cv, setCv] = useState();
   const [cx, setCx] = useState();
   const [allGood, setAllGood] = useState(false);
   const [action, setAction] = useState(null);
+  const [visibleMenu, setVisibleMenu] = useState(false);
+  const [positionMenu, setPositionMenu] = useState({ x: 0, y: 0 });
   var currentClass = null;
   var fromClass = null;
 
@@ -98,9 +101,7 @@ const CanvasView = (props) => {
   useEffect(() => {
     if (cx && action === relations.INHERITANCE) {
       actualizar();
-      cv.oncontextmenu = function () {
-        return false;
-      };
+
       cv.onmousedown = (event) => {
         if (event.button === 0) {
           classes.forEach((value, key) => {
@@ -125,6 +126,10 @@ const CanvasView = (props) => {
         onMouseMoveSelectClass(event);
       };
     } else if (cx && action === relations.NONE) {
+      window.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        return false;
+      });
       resetColor();
       actualizar();
 
@@ -136,6 +141,14 @@ const CanvasView = (props) => {
           classes.forEach((value, key) => {
             if (calculator.isItOverClass(value, event)) {
               currentClass = value;
+            }
+          });
+          setVisibleMenu(false);
+        } else if (event.button === 2) {
+          classes.forEach((value, key) => {
+            if (calculator.isItOverClass(value, event)) {
+              setPositionMenu({ x: event.clientX, y: event.clientY });
+              setVisibleMenu(true);
             }
           });
         }
@@ -251,11 +264,19 @@ const CanvasView = (props) => {
       setAllGood(false);
     }
   };
-
+  const closeMenu = () => {
+    setVisibleMenu(false);
+  };
   return (
     <>
       <WrapperView>
         <Header title={"CANVAS"} />
+        <Menu
+          visible={visibleMenu}
+          top={positionMenu.y}
+          left={positionMenu.x}
+          actions={[openModalE, setVisibleMenu]}
+        />
         <WrapperDescktop>
           <DashBoard
             color="#A6AFFF"
@@ -267,6 +288,93 @@ const CanvasView = (props) => {
         </WrapperDescktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
+          <form onSubmit={handleNewClass} id="formClass">
+            <label>
+              Nombre:
+              <input
+                type="text"
+                placeholder="Nombre de la clase"
+                name="nombre"
+                required={true}
+              />
+            </label>
+            <br></br>
+            <fieldset id="atributos" name="atributesList">
+              <legend>Atributos:</legend>
+              <input
+                type="text"
+                id="inputAtributo"
+                placeholder="Nuevo atributo"
+              />
+              <button
+                onClick={() => {
+                  let inputValue =
+                    document.getElementById("inputAtributo").value;
+                  const form = document.getElementById("atributos");
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "attribute",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    val.disabled = true;
+                    val.className = "attribute";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
+                }}
+              >
+                ADD
+              </button>
+            </fieldset>
+            <br></br>
+            <fieldset id="methods" name="methodsList">
+              <legend>Metodos:</legend>
+              <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
+              <button
+                onClick={(event) => {
+                  let inputValue = document.getElementById("inputMethod").value;
+                  const form = document.getElementById("methods");
+                  let exist = calculator.existOnInputList(
+                    form.children,
+                    "method",
+                    inputValue
+                  );
+                  if (!exist) {
+                    const val = document.createElement("input");
+                    console.log(val);
+                    val.disabled = true;
+                    val.className = "method";
+                    val.value = inputValue;
+                    const br = document.createElement("br");
+                    form.appendChild(br);
+                    form.appendChild(val);
+                  }
+                }}
+              >
+                ADD
+              </button>
+            </fieldset>
+            <Button
+              action={() => {
+                closeModal();
+              }}
+            >
+              CANCELAR
+            </Button>
+            <input
+              type="submit"
+              value="CREAR CLASE"
+              onClick={() => {
+                setAllGood(true);
+              }}
+            />
+          </form>
+        </Modal>
+        <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
           <form onSubmit={handleNewClass} id="formClass">
             <label>
               Nombre:
