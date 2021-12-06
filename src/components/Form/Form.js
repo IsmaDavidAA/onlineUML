@@ -4,12 +4,22 @@ import Button from "../Button/Button";
 import Input from "../Input/Input";
 import { Ul } from "./Fomr.styles";
 const Form = (props) => {
-  const [attributesList, setAttributesList] = useState([]);
-  const [methodeList, setMethodeList] = useState([]);
+  const [myClass, setMyClass] = useState({
+    name: "",
+    attributes: [],
+    methods: [],
+    inheritances: [],
+    dependencies: [],
+  });
+  useEffect(() => {
+    if (props.class && props.idClass) {
+      setMyClass(props.class);
+    }
+  }, []);
   return (
     <form
       onSubmit={(e) => {
-        props.handleNewClass(attributesList, methodeList, e);
+        props.handleNewClass(myClass, props.idClass, e);
       }}
       id={props.id}
     >
@@ -20,6 +30,9 @@ const Form = (props) => {
           placeholder="Nombre de la clase"
           name="nombre"
           required={true}
+          onChange={(e) => {
+            setMyClass({ ...myClass, name: e.target.value });
+          }}
         />
       </label>
       <br></br>
@@ -35,15 +48,18 @@ const Form = (props) => {
             const inputValue = document.getElementById(
               `inputAttributes-${props.id}`
             ).value;
-            if (!calculator.existOnInputList(attributesList, inputValue)) {
-              setAttributesList([...attributesList, inputValue]);
+            if (!calculator.existOnInputList(myClass.attributes, inputValue)) {
+              setMyClass({
+                ...myClass,
+                attributes: [...myClass.attributes, inputValue],
+              });
             }
           }}
         >
           ADD
         </button>
         <Ul>
-          {attributesList.map((element) => {
+          {myClass.attributes.map((element) => {
             return (
               <li key={element}>
                 <Input
@@ -70,15 +86,18 @@ const Form = (props) => {
             const inputValue = document.getElementById(
               `inputMethods-${props.id}`
             ).value;
-            if (!calculator.existOnInputList(methodeList, inputValue)) {
-              setMethodeList([...methodeList, inputValue]);
+            if (!calculator.existOnInputList(myClass.methods, inputValue)) {
+              setMyClass({
+                ...myClass,
+                methods: [...myClass.methods, inputValue],
+              });
             }
           }}
         >
           ADD
         </button>
         <Ul>
-          {methodeList.map((element) => {
+          {myClass.methods.map((element) => {
             return (
               <li key={element}>
                 <Input

@@ -6,11 +6,9 @@ import { WrapperView } from "../../GlobalStyle";
 import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
-import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
 import Menu from "../../components/Menu/Menu";
-import Input from "../../components/Input/Input";
 import Form from "../../components/Form/Form";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
@@ -218,19 +216,29 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const addClass = (name, attributes, methods) => {
-    classes.set(calculator.generateID(), {
+  const addClass = (setClass, id) => {
+    classes.set(id ? id : calculator.generateID(), {
       x: 10,
       y: 10,
-      width: calculator.calculateWidthClass(methods, attributes, name),
-      height: calculator.calculateHeightClass(attributes, methods),
-      separatorLine: calculator.calculateSeparatorLine(methods, attributes),
-      name: `${name}`,
+      width: calculator.calculateWidthClass(
+        setClass.methods,
+        setClass.attributes,
+        setClass.name
+      ),
+      height: calculator.calculateHeightClass(
+        setClass.attributes,
+        setClass.methods
+      ),
+      separatorLine: calculator.calculateSeparatorLine(
+        setClass.methods,
+        setClass.attributes
+      ),
+      name: `${setClass.name}`,
       color: "black",
-      attributes: attributes,
-      methods: methods,
-      inheritances: [],
-      dependencies: [],
+      attributes: setClass.attributes,
+      methods: setClass.methods,
+      inheritances: setClass.inheritances ? setClass.inheritances : [],
+      dependencies: setClass.dependencies ? setClass.dependencies : [],
     });
   };
 
@@ -240,31 +248,18 @@ const CanvasView = (props) => {
     });
   };
 
-  const handleNewClass = (listAttributes, listMethods, e) => {
+  const handleNewClass = (setClass, id, e) => {
     e.preventDefault();
-    const { nombre } = e.target.elements;
     const exists = [...classes].some((value) => {
-      return value[1].name === nombre.value;
+      return value[1].name === setClass.name;
     });
     if (allGood && !exists) {
-      addClass(nombre.value, listAttributes, listMethods);
+      addClass(setClass, id);
       closeModal();
       setAllGood(false);
     }
   };
 
-  const handleEditClass = (listAttributes, listMethods, e) => {
-    e.preventDefault();
-    const { nombre } = e.target.elements;
-    const exists = [...classes].some((value) => {
-      return value[1].name === nombre.value;
-    });
-    if (allGood && !exists) {
-      addClass(nombre.value, listAttributes, listMethods);
-      closeModal();
-      setAllGood(false);
-    }
-  };
   return (
     <>
       <WrapperView>
