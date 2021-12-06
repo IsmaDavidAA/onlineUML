@@ -37,9 +37,7 @@ export const calculator = {
     );
   },
 
-  existOnInputList: (list, type, input) => {
-    return [...list].some(
-      (element) => element.className === type && element.value === input
-    );
+  existOnInputList: (list, input) => {
+    return list.length > 0 ? list.some((element) => element === input) : false;
   },
 };
