@@ -24,28 +24,29 @@ const SvgView = (props) => {
   const actualizar = (key) => {
     if (key) {
       const mySvg = document.getElementById("svg");
-      console.log("let me beeeeeeeeeeeeee");
       const value = classes.get(key);
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
       const rect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
       );
+
       rect.setAttribute("x", value.x);
       rect.setAttribute("y", value.y);
       rect.setAttribute("width", value.width);
       rect.setAttribute("height", value.height);
       rect.setAttribute(
         "style",
-        `fill:${value.color};stroke:black;stroke-width:5;opacity:0.5`
+        `fill:white;stroke:black;stroke-width:1;opacity:0.5`
       );
-      rect.setAttribute("id", key);
-      rect.onmousedown = (event) => {
+      g.setAttribute("id", key);
+      g.onmousedown = (event) => {
         if (event.button === 0) {
           currentClass = key;
         } else if (event.button === 2) {
         }
       };
-      rect.onmousemove = (event) => {
+      g.onmousemove = (event) => {
         if (currentClass) {
           const newValue = {
             ...classes.get(currentClass),
@@ -63,10 +64,20 @@ const SvgView = (props) => {
           setClasses(classes);
         }
       };
-      rect.onmouseup = (event) => {
+      g.onmouseup = (event) => {
         currentClass = null;
       };
-      mySvg.appendChild(rect);
+      const text = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "text"
+      );
+      text.setAttribute("x", value.x + 1);
+      text.setAttribute("y", value.y + 20);
+      text.appendChild(document.createTextNode(value.name));
+      g.appendChild(rect);
+      g.appendChild(text);
+
+      mySvg.appendChild(g);
     }
   };
 
