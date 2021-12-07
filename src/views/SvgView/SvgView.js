@@ -31,8 +31,8 @@ const SvgView = (props) => {
         "rect"
       );
 
-      rect.setAttribute("x", value.x);
-      rect.setAttribute("y", value.y);
+      rect.setAttribute("x", 0);
+      rect.setAttribute("y", 0);
       rect.setAttribute("width", value.width);
       rect.setAttribute("height", value.height);
       rect.setAttribute(
@@ -47,6 +47,7 @@ const SvgView = (props) => {
         }
       };
       g.onmousemove = (event) => {
+        event.target.style.cursor = "pointer";
         if (currentClass) {
           const newValue = {
             ...classes.get(currentClass),
@@ -66,17 +67,61 @@ const SvgView = (props) => {
       };
       g.onmouseup = (event) => {
         currentClass = null;
+        event.target.style.cursor = "default";
       };
       const text = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text"
       );
-      text.setAttribute("x", value.x + 1);
-      text.setAttribute("y", value.y + 20);
+      text.setAttribute("x", 1);
+      text.setAttribute("y", 18);
+      text.setAttribute("font-size", "20");
+      text.setAttribute("font", "Arial");
       text.appendChild(document.createTextNode(value.name));
+      let aumento = 36;
+
+      if (value.attributes.length > 0) {
+        value.attributes.forEach((attributes) => {
+          const inherit = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "tspan"
+          );
+          inherit.setAttribute("x", 1);
+          inherit.setAttribute("y", aumento);
+          inherit.setAttribute("font-size", "12px");
+          inherit.setAttribute("font", "Arial");
+          inherit.appendChild(document.createTextNode(attributes));
+          aumento += 15;
+          text.appendChild(inherit);
+        });
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        line.setAttribute("y1", aumento - 12);
+        line.setAttribute("x2", value.width);
+        line.setAttribute("y2", aumento - 12);
+        line.setAttribute("stroke", "black");
+        g.appendChild(line);
+      }
+
+      if (value.methods.length > 0) {
+        value.methods.forEach((method) => {
+          const inherit = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "tspan"
+          );
+          inherit.setAttribute("x", 1);
+          inherit.setAttribute("y", aumento);
+          inherit.setAttribute("font-size", "12px");
+          inherit.setAttribute("font", "Arial");
+          inherit.appendChild(document.createTextNode(method));
+          aumento += 15;
+          text.appendChild(inherit);
+        });
+      }
       g.appendChild(rect);
       g.appendChild(text);
-
       mySvg.appendChild(g);
     }
   };
