@@ -3,7 +3,7 @@ import Canvas from "../../components/Canvas/Canvas";
 import DashBoard from "../../components/Dashboard/Dashboard";
 import Header from "../../components/Header/Header";
 import { WrapperView } from "../../GlobalStyle";
-import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
+import { WrapperCanvas, WrapperDesktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import { calculator } from "../../utils/Calculator.js";
@@ -270,7 +270,7 @@ const CanvasView = (props) => {
           left={positionMenu.x}
           actions={[openModalE, setVisibleMenu]}
         />
-        <WrapperDescktop>
+        <WrapperDesktop>
           <DashBoard
             color="#A6AFFF"
             action={[setAction, openModal]}
@@ -278,7 +278,7 @@ const CanvasView = (props) => {
           <WrapperCanvas>
             <Canvas height={550} width={900}></Canvas>
           </WrapperCanvas>
-        </WrapperDescktop>
+        </WrapperDesktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
           <Form
