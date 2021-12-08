@@ -9,6 +9,7 @@ import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
+import { useLocalStorage } from "../../useLocalStorage";
 
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
@@ -19,6 +20,33 @@ const CanvasView = (props) => {
   const [action, setAction] = useState(null);
   var currentClass = null;
   var fromClass = null;
+  //getClases();
+ //guardar();
+  //localStorage.setItem('clases', JSON.stringify([...classes]));
+  //const newMap = new Map(JSON.parse(localStorage.getItem('clases')));
+
+ const guardar=()=>{
+   localStorage.setItem('clases', JSON.stringify([...classes]));
+   const newMap = new Map(JSON.parse(localStorage.getItem('clases')));
+   //var initial=JSON.stringify([...classes]);
+   //useLocalStorage('clases', '')
+   //console.log(newMap);
+ }
+ 
+ //const [classes, setClasses] = useLocalStorage('clases',new Map([]));
+
+  function borrar(){
+    /*document.getElementById("formClass").focus();
+    document.getElementById("formClass").value= "";
+
+    let formulario = document.getElementById('formClass');
+    formulario.addEventListener("submit", function() {
+      formulario.reset();
+    });*/
+    //document.getElementById("formClass").focus();
+    document.getElementById("formClass").reset();
+    //document.getElementById("atributos").removeChild("atributesList");
+  }
 
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
@@ -59,6 +87,7 @@ const CanvasView = (props) => {
         linesDependenciesGenerate(value);
       }
     });
+    
   }
   const linesDependenciesGenerate = (value) => {
     value.dependencies.forEach((dependencyKey) => {
@@ -86,12 +115,13 @@ const CanvasView = (props) => {
   };
 
   useEffect(() => {
-    setCv(document.getElementById("canvas"));
+    setCv(document.getElementById("canvas")); 
   }, []);
 
   useEffect(() => {
     if (cv) {
-      setCx(cv.getContext("2d"));
+      setCx(cv.getContext("2d")); 
+      //console.log(guardar());
     }
   }, [cv]);
 
@@ -249,6 +279,7 @@ const CanvasView = (props) => {
       addClass(nombre.value, attributesValues, methodsValues);
       closeModal();
       setAllGood(false);
+      borrar();
     }
   };
 
@@ -259,7 +290,8 @@ const CanvasView = (props) => {
         <WrapperDescktop>
           <DashBoard
             color="#A6AFFF"
-            action={[setAction, openModal]}
+            clases={classes}
+            action={[setAction, openModal, guardar]}
           ></DashBoard>
           <WrapperCanvas>
             <Canvas height={550} width={900}></Canvas>
@@ -303,6 +335,7 @@ const CanvasView = (props) => {
                     const br = document.createElement("br");
                     form.appendChild(br);
                     form.appendChild(val);
+                    document.getElementById("inputAtributo").value="";
                   }
                 }}
               >
@@ -315,6 +348,7 @@ const CanvasView = (props) => {
               <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
               <button
                 onClick={(event) => {
+
                   let inputValue = document.getElementById("inputMethod").value;
                   const form = document.getElementById("methods");
                   let exist = calculator.existOnInputList(
@@ -331,6 +365,7 @@ const CanvasView = (props) => {
                     const br = document.createElement("br");
                     form.appendChild(br);
                     form.appendChild(val);
+                    document.getElementById("inputMethod").value="";
                   }
                 }}
               >
@@ -358,4 +393,8 @@ const CanvasView = (props) => {
   );
 };
 
+
 export default CanvasView;
+
+//localStorage.setItem("CanvasView", JSON.stringify(CanvasView));
+//const CanvasVista = JSON.parse(localStorage.getItem("CanvasView"));
