@@ -81,6 +81,15 @@ const SvgView = (props) => {
       let aumento = 36;
 
       if (value.attributes.length > 0) {
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        line.setAttribute("y1", aumento - 12);
+        line.setAttribute("x2", value.width);
+        line.setAttribute("y2", aumento - 12);
+        line.setAttribute("stroke", "black");
+        g.appendChild(line);
         value.attributes.forEach((attributes) => {
           const inherit = document.createElementNS(
             "http://www.w3.org/2000/svg",
@@ -94,6 +103,9 @@ const SvgView = (props) => {
           aumento += 15;
           text.appendChild(inherit);
         });
+      }
+
+      if (value.methods.length > 0) {
         const line = document.createElementNS(
           "http://www.w3.org/2000/svg",
           "line"
@@ -103,9 +115,6 @@ const SvgView = (props) => {
         line.setAttribute("y2", aumento - 12);
         line.setAttribute("stroke", "black");
         g.appendChild(line);
-      }
-
-      if (value.methods.length > 0) {
         value.methods.forEach((method) => {
           const inherit = document.createElementNS(
             "http://www.w3.org/2000/svg",
@@ -136,20 +145,18 @@ const SvgView = (props) => {
   useEffect(() => {
     if (svg && action === relations.INHERITANCE) {
       classes.forEach((value, key) => {
-        console.log(value);
+        
       });
-      actualizar();
+      
     } else if (svg && action === relations.NONE) {
       window.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         return false;
       });
-      resetColor();
-      actualizar();
-
+      
       classes.forEach((value, key) => {
-        console.log(value);
       });
+
       actualizar();
     } else if (svg && action === relations.DEPENDENCY) {
       actualizar();
