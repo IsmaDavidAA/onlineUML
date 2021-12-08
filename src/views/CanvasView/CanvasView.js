@@ -3,21 +3,24 @@ import Canvas from "../../components/Canvas/Canvas";
 import DashBoard from "../../components/Dashboard/Dashboard";
 import Header from "../../components/Header/Header";
 import { WrapperView } from "../../GlobalStyle";
-import { WrapperCanvas, WrapperDescktop } from "./CanvasView.styles";
+import { WrapperCanvas, WrapperDesktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
-import Button from "../../components/Button/Button";
 import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
-import { useLocalStorage } from "../../useLocalStorage";
+import Menu from "../../components/Menu/Menu";
+import Form from "../../components/Form/Form";
 
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
+  const [isOpenModalE, openModalE, closeModalE] = useModal();
   const [classes, setClasses] = useState(new Map([]));
   const [cv, setCv] = useState();
   const [cx, setCx] = useState();
   const [allGood, setAllGood] = useState(false);
   const [action, setAction] = useState(null);
+  const [visibleMenu, setVisibleMenu] = useState(false);
+  const [positionMenu, setPositionMenu] = useState({ x: 0, y: 0 });
   var currentClass = null;
   var fromClass = null;
   //getClases();
@@ -128,9 +131,7 @@ const CanvasView = (props) => {
   useEffect(() => {
     if (cx && action === relations.INHERITANCE) {
       actualizar();
-      cv.oncontextmenu = function () {
-        return false;
-      };
+
       cv.onmousedown = (event) => {
         if (event.button === 0) {
           classes.forEach((value, key) => {
@@ -155,6 +156,10 @@ const CanvasView = (props) => {
         onMouseMoveSelectClass(event);
       };
     } else if (cx && action === relations.NONE) {
+      window.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        return false;
+      });
       resetColor();
       actualizar();
 
@@ -166,6 +171,14 @@ const CanvasView = (props) => {
           classes.forEach((value, key) => {
             if (calculator.isItOverClass(value, event)) {
               currentClass = value;
+            }
+          });
+          setVisibleMenu(false);
+        } else if (event.button === 2) {
+          classes.forEach((value, key) => {
+            if (calculator.isItOverClass(value, event)) {
+              setPositionMenu({ x: event.clientX, y: event.clientY });
+              setVisibleMenu(true);
             }
           });
         }
@@ -233,19 +246,29 @@ const CanvasView = (props) => {
     }
   }, [cx]);
 
-  const addClass = (name, attributes, methods) => {
-    classes.set(calculator.generateID(), {
+  const addClass = (setClass, id) => {
+    classes.set(id ? id : calculator.generateID(), {
       x: 10,
       y: 10,
-      width: calculator.calculateWidthClass(methods, attributes, name),
-      height: calculator.calculateHeightClass(attributes, methods),
-      separatorLine: calculator.calculateSeparatorLine(methods, attributes),
-      name: `${name}`,
+      width: calculator.calculateWidthClass(
+        setClass.methods,
+        setClass.attributes,
+        setClass.name
+      ),
+      height: calculator.calculateHeightClass(
+        setClass.attributes,
+        setClass.methods
+      ),
+      separatorLine: calculator.calculateSeparatorLine(
+        setClass.methods,
+        setClass.attributes
+      ),
+      name: `${setClass.name}`,
       color: "black",
-      attributes: attributes,
-      methods: methods,
-      inheritances: [],
-      dependencies: [],
+      attributes: setClass.attributes,
+      methods: setClass.methods,
+      inheritances: setClass.inheritances ? setClass.inheritances : [],
+      dependencies: setClass.dependencies ? setClass.dependencies : [],
     });
   };
 
@@ -255,28 +278,13 @@ const CanvasView = (props) => {
     });
   };
 
-  const handleNewClass = (e) => {
+  const handleNewClass = (setClass, id, e) => {
     e.preventDefault();
-    const { nombre, atributesList, methodsList } = e.target.elements;
     const exists = [...classes].some((value) => {
-      return value[1].name === nombre.value;
+      return value[1].name === setClass.name;
     });
     if (allGood && !exists) {
-      let attributes = atributesList.children;
-      let attributesValues = [];
-      for (var i = 0; i < attributes.length; i++) {
-        if (attributes[i].className === "attribute") {
-          attributesValues.push(attributes[i].value);
-        }
-      }
-      let methods = methodsList.children;
-      let methodsValues = [];
-      for (var i = 0; i < methods.length; i++) {
-        if (methods[i].className === "method") {
-          methodsValues.push(methods[i].value);
-        }
-      }
-      addClass(nombre.value, attributesValues, methodsValues);
+      addClass(setClass, id);
       closeModal();
       setAllGood(false);
       borrar();
@@ -287,7 +295,13 @@ const CanvasView = (props) => {
     <>
       <WrapperView>
         <Header title={"CANVAS"} />
-        <WrapperDescktop>
+        <Menu
+          visible={visibleMenu}
+          top={positionMenu.y}
+          left={positionMenu.x}
+          actions={[openModalE, setVisibleMenu]}
+        />
+        <WrapperDesktop>
           <DashBoard
             color="#A6AFFF"
             clases={classes}
@@ -296,97 +310,24 @@ const CanvasView = (props) => {
           <WrapperCanvas>
             <Canvas height={550} width={900}></Canvas>
           </WrapperCanvas>
-        </WrapperDescktop>
+        </WrapperDesktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
-          <form onSubmit={handleNewClass} id="formClass">
-            <label>
-              Nombre:
-              <input
-                type="text"
-                placeholder="Nombre de la clase"
-                name="nombre"
-                required={true}
-              />
-            </label>
-            <br></br>
-            <fieldset id="atributos" name="atributesList">
-              <legend>Atributos:</legend>
-              <input
-                type="text"
-                id="inputAtributo"
-                placeholder="Nuevo atributo"
-              />
-              <button
-                onClick={() => {
-                  let inputValue =
-                    document.getElementById("inputAtributo").value;
-                  const form = document.getElementById("atributos");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "attribute",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    val.disabled = true;
-                    val.className = "attribute";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                    document.getElementById("inputAtributo").value="";
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <br></br>
-            <fieldset id="methods" name="methodsList">
-              <legend>Metodos:</legend>
-              <input type="text" id="inputMethod" placeholder="Nuevo metodo" />
-              <button
-                onClick={(event) => {
-
-                  let inputValue = document.getElementById("inputMethod").value;
-                  const form = document.getElementById("methods");
-                  let exist = calculator.existOnInputList(
-                    form.children,
-                    "method",
-                    inputValue
-                  );
-                  if (!exist) {
-                    const val = document.createElement("input");
-                    console.log(val);
-                    val.disabled = true;
-                    val.className = "method";
-                    val.value = inputValue;
-                    const br = document.createElement("br");
-                    form.appendChild(br);
-                    form.appendChild(val);
-                    document.getElementById("inputMethod").value="";
-                  }
-                }}
-              >
-                ADD
-              </button>
-            </fieldset>
-            <Button
-              action={() => {
-                closeModal();
-              }}
-            >
-              CANCELAR
-            </Button>
-            <input
-              type="submit"
-              value="CREAR CLASE"
-              onClick={() => {
-                setAllGood(true);
-              }}
-            />
-          </form>
+          <Form
+            handleNewClass={handleNewClass}
+            closeModal={closeModal}
+            setAllGood={setAllGood}
+            id="formClassCreate"
+          />
+        </Modal>
+        <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
+          <p>EDITAR CLASE</p>
+          <Form
+            handleNewClass={handleNewClass}
+            closeModal={closeModal}
+            setAllGood={setAllGood}
+            id="formClassEdit"
+          />
         </Modal>
       </WrapperView>
     </>
@@ -396,5 +337,3 @@ const CanvasView = (props) => {
 
 export default CanvasView;
 
-//localStorage.setItem("CanvasView", JSON.stringify(CanvasView));
-//const CanvasVista = JSON.parse(localStorage.getItem("CanvasView"));
