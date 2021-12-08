@@ -17,6 +17,9 @@ const DashBoard = (props) => {
       <Button action={props.action[0]} typeAction={relations.DEPENDENCY}>
         DEPENDENCIA
       </Button>
+      <Button action={props.action[2]} typeAction={props.clases}>
+        GUARDAR
+      </Button>
     </WrapperDashboard>
   );
 };

@@ -10,6 +10,7 @@ import { calculator } from "../../utils/Calculator.js";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
 import Menu from "../../components/Menu/Menu";
 import Form from "../../components/Form/Form";
+
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [isOpenModalE, openModalE, closeModalE] = useModal();
@@ -22,6 +23,33 @@ const CanvasView = (props) => {
   const [positionMenu, setPositionMenu] = useState({ x: 0, y: 0 });
   var currentClass = null;
   var fromClass = null;
+  //getClases();
+ //guardar();
+  //localStorage.setItem('clases', JSON.stringify([...classes]));
+  //const newMap = new Map(JSON.parse(localStorage.getItem('clases')));
+
+ const guardar=()=>{
+   localStorage.setItem('clases', JSON.stringify([...classes]));
+   const newMap = new Map(JSON.parse(localStorage.getItem('clases')));
+   //var initial=JSON.stringify([...classes]);
+   //useLocalStorage('clases', '')
+   //console.log(newMap);
+ }
+ 
+ //const [classes, setClasses] = useLocalStorage('clases',new Map([]));
+
+  function borrar(){
+    /*document.getElementById("formClass").focus();
+    document.getElementById("formClass").value= "";
+
+    let formulario = document.getElementById('formClass');
+    formulario.addEventListener("submit", function() {
+      formulario.reset();
+    });*/
+    //document.getElementById("formClass").focus();
+    document.getElementById("formClass").reset();
+    //document.getElementById("atributos").removeChild("atributesList");
+  }
 
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
@@ -62,6 +90,7 @@ const CanvasView = (props) => {
         linesDependenciesGenerate(value);
       }
     });
+    
   }
   const linesDependenciesGenerate = (value) => {
     value.dependencies.forEach((dependencyKey) => {
@@ -89,12 +118,13 @@ const CanvasView = (props) => {
   };
 
   useEffect(() => {
-    setCv(document.getElementById("canvas"));
+    setCv(document.getElementById("canvas")); 
   }, []);
 
   useEffect(() => {
     if (cv) {
-      setCx(cv.getContext("2d"));
+      setCx(cv.getContext("2d")); 
+      //console.log(guardar());
     }
   }, [cv]);
 
@@ -257,6 +287,7 @@ const CanvasView = (props) => {
       addClass(setClass, id);
       closeModal();
       setAllGood(false);
+      borrar();
     }
   };
 
@@ -273,7 +304,8 @@ const CanvasView = (props) => {
         <WrapperDesktop>
           <DashBoard
             color="#A6AFFF"
-            action={[setAction, openModal]}
+            clases={classes}
+            action={[setAction, openModal, guardar]}
           ></DashBoard>
           <WrapperCanvas>
             <Canvas height={550} width={900}></Canvas>
@@ -302,4 +334,6 @@ const CanvasView = (props) => {
   );
 };
 
+
 export default CanvasView;
+
