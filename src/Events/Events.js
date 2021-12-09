@@ -150,6 +150,14 @@ export const eventsSvg = {
             classes.get(currentClass.current)
           );
         }
+        if (classes.get(key).inheritances.includes(currentClass.current)) {
+          updateLine(
+            value,
+            key,
+            currentClass.current,
+            classes.get(currentClass.current)
+          );
+        }
       });
       classes.set(currentClass.current, newValue);
       setClasses(classes);
