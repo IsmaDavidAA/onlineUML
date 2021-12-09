@@ -7,28 +7,29 @@ import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Form from "../../components/Form/Form";
 import Svg from "../../components/Svg/Svg";
-import { calculator } from "../../utils/Calculator";
-import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
+import { relations } from "../../Constants";
 import { eventsSvg } from "../../Events/Events";
+import { useClasses } from "../../hooks/useClasses";
 const SvgView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [isOpenModalE, openModalE, closeModalE] = useModal();
-  const [classes, setClasses] = useState(new Map([]));
+  const [
+    classes,
+    setClasses,
+    action,
+    setAction,
+    fromClass,
+    currentClass,
+    setFromClass,
+    setCurrentClass,
+    validClass,
+    setValidClass,
+    addClass,
+  ] = useClasses();
   const [svg, setSvg] = useState(null);
-  const [allGood, setAllGood] = useState(false);
-  const [action, setAction] = useState(null);
   const [visibleMenu, setVisibleMenu] = useState(false);
   const [positionMenu, setPositionMenu] = useState({ x: 0, y: 0 });
-  const fromClass = useRef(null);
-  const currentClass = useRef(null);
 
-  const setFromClass = (className) => {
-    fromClass.current = className;
-  };
-
-  const setCurrentClass = (className) => {
-    currentClass.current = className;
-  };
   const actualizar = (key) => {
     if (key) {
       const mySvg = document.getElementById("svg");
@@ -38,7 +39,6 @@ const SvgView = (props) => {
         "http://www.w3.org/2000/svg",
         "rect"
       );
-
       rect.setAttribute("x", 0);
       rect.setAttribute("y", 0);
       rect.setAttribute("width", value.width);
@@ -181,43 +181,15 @@ const SvgView = (props) => {
     }
   }, [svg]);
 
-  const addClass = (setClass, id) => {
-    const idN = id ? id : calculator.generateID();
-    classes.set(idN, {
-      x: 10,
-      y: 10,
-      width: calculator.calculateWidthClass(
-        setClass.methods,
-        setClass.attributes,
-        setClass.name
-      ),
-      height: calculator.calculateHeightClass(
-        setClass.attributes,
-        setClass.methods
-      ),
-      separatorLine: calculator.calculateSeparatorLine(
-        setClass.methods,
-        setClass.attributes
-      ),
-      name: `${setClass.name}`,
-      color: "black",
-      attributes: setClass.attributes,
-      methods: setClass.methods,
-      inheritances: setClass.inheritances ? setClass.inheritances : [],
-      dependencies: setClass.dependencies ? setClass.dependencies : [],
-    });
-    actualizar(idN);
-  };
-
   const handleNewClass = (setClass, id, e) => {
     e.preventDefault();
     const exists = [...classes].some((value) => {
       return value[1].name === setClass.name;
     });
-    if (allGood && !exists) {
-      addClass(setClass, id);
+    if (validClass && !exists) {
+      addClass(setClass, id, actualizar);
       closeModal();
-      setAllGood(false);
+      setValidClass(false);
     }
   };
 
@@ -239,7 +211,7 @@ const SvgView = (props) => {
           <Form
             handleNewClass={handleNewClass}
             closeModal={closeModal}
-            setAllGood={setAllGood}
+            setAllGood={setValidClass}
             id="formClassCreate"
           />
         </Modal>
@@ -248,7 +220,7 @@ const SvgView = (props) => {
           <Form
             handleNewClass={handleNewClass}
             closeModal={closeModal}
-            setAllGood={setAllGood}
+            setAllGood={setValidClass}
             id="formClassEdit"
           />
         </Modal>
