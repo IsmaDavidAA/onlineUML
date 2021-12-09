@@ -9,6 +9,7 @@ import Form from "../../components/Form/Form";
 import Svg from "../../components/Svg/Svg";
 import { calculator } from "../../utils/Calculator";
 import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
+import { eventsSvg } from "../../Events/Events";
 const SvgView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [isOpenModalE, openModalE, closeModalE] = useModal();
@@ -18,8 +19,9 @@ const SvgView = (props) => {
   const [action, setAction] = useState(null);
   const [visibleMenu, setVisibleMenu] = useState(false);
   const [positionMenu, setPositionMenu] = useState({ x: 0, y: 0 });
+  const [fromClass, setFromClass] = useState(null);
+  // const [currentClass, setCurrentClass] = useState(null);
   var currentClass = null;
-  var fromClass = null;
 
   const actualizar = (key) => {
     if (key) {
@@ -40,35 +42,9 @@ const SvgView = (props) => {
         `fill:white;stroke:black;stroke-width:1;opacity:0.5`
       );
       g.setAttribute("id", key);
-      g.onmousedown = (event) => {
-        if (event.button === 0) {
-          currentClass = key;
-        } else if (event.button === 2) {
-        }
-      };
-      g.onmousemove = (event) => {
-        event.target.style.cursor = "pointer";
-        if (currentClass) {
-          const newValue = {
-            ...classes.get(currentClass),
-            x: event.clientX - HORIZONTAL - classes.get(currentClass).width / 2,
-            y: event.clientY - VERTICAL - classes.get(currentClass).height / 2,
-          };
-          document
-            .getElementById(currentClass)
-            .setAttributeNS(
-              null,
-              "transform",
-              "translate(" + newValue.x + "," + newValue.y + ")"
-            );
-          classes.set(currentClass, newValue);
-          setClasses(classes);
-        }
-      };
-      g.onmouseup = (event) => {
-        currentClass = null;
-        event.target.style.cursor = "default";
-      };
+      g.onmousedown = (e) => onMouseDown(key, e);
+      g.onmousemove = onMouseMove;
+      g.onmouseup = eventsSvg.onMouseUp;
       const text = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "text"
@@ -81,6 +57,15 @@ const SvgView = (props) => {
       let aumento = 36;
 
       if (value.attributes.length > 0) {
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        line.setAttribute("y1", aumento - 12);
+        line.setAttribute("x2", value.width);
+        line.setAttribute("y2", aumento - 12);
+        line.setAttribute("stroke", "black");
+        g.appendChild(line);
         value.attributes.forEach((attributes) => {
           const inherit = document.createElementNS(
             "http://www.w3.org/2000/svg",
@@ -94,6 +79,9 @@ const SvgView = (props) => {
           aumento += 15;
           text.appendChild(inherit);
         });
+      }
+
+      if (value.methods.length > 0) {
         const line = document.createElementNS(
           "http://www.w3.org/2000/svg",
           "line"
@@ -103,9 +91,6 @@ const SvgView = (props) => {
         line.setAttribute("y2", aumento - 12);
         line.setAttribute("stroke", "black");
         g.appendChild(line);
-      }
-
-      if (value.methods.length > 0) {
         value.methods.forEach((method) => {
           const inherit = document.createElementNS(
             "http://www.w3.org/2000/svg",
@@ -136,25 +121,32 @@ const SvgView = (props) => {
   useEffect(() => {
     if (svg && action === relations.INHERITANCE) {
       classes.forEach((value, key) => {
-        console.log(value);
+        const g = document.getElementById(key);
+        g.onmousedown = (e) =>
+          onMouseDownInheritance(setFromClass, key, value, e);
+        g.onmousemove = eventsSvg.onMouseMoveNull;
+        g.onmouseup = eventsSvg.onMouseUp;
       });
-      actualizar();
     } else if (svg && action === relations.NONE) {
       window.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         return false;
       });
-      resetColor();
-      actualizar();
-
       classes.forEach((value, key) => {
-        console.log(value);
+        const g = document.getElementById(key);
+        g.onmousedown = (e) => onMouseDown(key, e);
+        g.onmousemove = onMouseMove;
+        g.onmouseup = eventsSvg.onMouseUp;
       });
+
       actualizar();
     } else if (svg && action === relations.DEPENDENCY) {
       actualizar();
       classes.forEach((value, key) => {
-        console.log(value);
+        const g = document.getElementById(key);
+        g.onmousedown = (e) => onMouseDownDependency(key, value, e);
+        g.onmousemove = onMouseMoveNull;
+        g.onmouseup = eventsSvg.onMouseUp;
       });
 
       actualizar();
@@ -210,6 +202,78 @@ const SvgView = (props) => {
       addClass(setClass, id);
       closeModal();
       setAllGood(false);
+    }
+  };
+
+  const onMouseMove = (event) => {
+    event.target.style.cursor = "pointer";
+    if (currentClass) {
+      const newValue = {
+        ...classes.get(currentClass),
+        x: event.clientX - HORIZONTAL - classes.get(currentClass).width / 2,
+        y: event.clientY - VERTICAL - classes.get(currentClass).height / 2,
+      };
+      document
+        .getElementById(currentClass)
+        .setAttributeNS(
+          null,
+          "transform",
+          "translate(" + newValue.x + "," + newValue.y + ")"
+        );
+      classes.set(currentClass, newValue);
+      setClasses(classes);
+    }
+  };
+
+  const onMouseMoveNull = (event) => {
+    event.target.style.cursor = "pointer";
+  };
+
+  const onMouseDown = (key, event) => {
+    if (event.button === 0) {
+      currentClass = key;
+    }
+  };
+  const onMouseDownInheritance = (setFrom, key, value, event) => {
+    event.stopPropagation();
+    const idFrom = event.view.$r.hooks[8].value;
+    if (event.button === 0) {
+      if (!idFrom) {
+        value.color = "blue";
+        setFrom(key);
+        console.log(key, value, fromClass);
+      } else if (idFrom !== key) {
+        classes.get(idFrom).inheritances = [key];
+        setAction(relations.NONE);
+        setFrom(null);
+      }
+    } else if (event.button === 2) {
+      setAction(relations.NONE);
+    }
+  };
+  const onMouseDownDependency = (key, value, event) => {
+    event.stopPropagation();
+    const idFrom = event.view.$r.hooks[8].value;
+    console.log(fromClass, key, idFrom);
+    if (event.button === 0) {
+      if (!idFrom) {
+        value.color = "blue";
+        setFromClass(key);
+      } else if (idFrom !== key) {
+        if (!classes.get(idFrom).dependencies.includes(key)) {
+          setClasses(
+            classes.set(idFrom, {
+              ...classes.get(idFrom),
+              dependencies: [...classes.get(idFrom).dependencies, key],
+            })
+          );
+          setFromClass(null);
+          setAction(relations.NONE);
+        }
+      }
+    } else if (event.button === 2) {
+      setFromClass(null);
+      setAction(relations.NONE);
     }
   };
 
