@@ -179,7 +179,6 @@ const CanvasView = (props) => {
                 value.color = "blue";
                 fromClass = key;
               } else if (fromClass !== key) {
-                console.log(classes.get(fromClass).dependencies);
                 if (!classes.get(fromClass).dependencies.includes(key)) {
                   classes.get(fromClass).dependencies.push(key);
                   setAction(relations.NONE);

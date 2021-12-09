@@ -1,29 +1,11 @@
 import { calculator } from "../utils/Calculator";
-export const events = {
-  onMousedown: (
-    relations,
-    fromClass,
-    classes,
-    setAction,
-    actualizar,
-    event
-  ) => {
-    if (event.button === 0) {
-      classes.forEach((value, key) => {
-        if (calculator.isItOverClass(value, event)) {
-          if (!fromClass) {
-            value.color = "blue";
-            fromClass = key;
-          } else if (fromClass !== key) {
-            classes.get(fromClass).inheritances = [key];
-            setAction(relations.NONE);
-            fromClass = null;
-          }
-        }
-      });
-    } else {
-      setAction(relations.NONE);
-    }
-    actualizar();
+export const eventsSvg = {
+  onMouseMoveNull: (event) => {
+    event.target.style.cursor = "pointer";
+  },
+  onMouseUp: (event) => {
+    console.log(event.view.$r.hooks[9].value);
+    // currentClass = null;
+    event.target.style.cursor = "default";
   },
 };

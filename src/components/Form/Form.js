@@ -66,7 +66,7 @@ const Form = (props) => {
                   className={`attribute-${props.id}`}
                   value={element}
                   disabled={true}
-                  action={console.log("hola")}
+                  // action={console.log(myClass)}
                 />
               </li>
             );
@@ -104,7 +104,7 @@ const Form = (props) => {
                   className={`method-${props.id}`}
                   value={element}
                   disabled={true}
-                  action={console.log("hola")}
+                  // action={console.log(myClass)}
                 />
               </li>
             );
