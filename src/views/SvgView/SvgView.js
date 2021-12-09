@@ -60,6 +60,9 @@ const SvgView = (props) => {
       text.setAttribute("y", 18);
       text.setAttribute("font-size", "20");
       text.setAttribute("font", "Arial");
+      text.setAttribute("pointer-events", "none");
+      text.setAttribute("selectable", "false");
+      text.setAttribute("select", "none");
       text.appendChild(document.createTextNode(value.name));
       let aumento = 36;
 
@@ -82,6 +85,7 @@ const SvgView = (props) => {
           inherit.setAttribute("y", aumento);
           inherit.setAttribute("font-size", "12px");
           inherit.setAttribute("font", "Arial");
+          inherit.setAttribute("pointer-events", "none");
           inherit.appendChild(document.createTextNode(attributes));
           aumento += 15;
           text.appendChild(inherit);
@@ -107,6 +111,7 @@ const SvgView = (props) => {
           inherit.setAttribute("y", aumento);
           inherit.setAttribute("font-size", "12px");
           inherit.setAttribute("font", "Arial");
+          inherit.setAttribute("pointer-events", "none");
           inherit.appendChild(document.createTextNode(method));
           aumento += 15;
           text.appendChild(inherit);
@@ -117,7 +122,7 @@ const SvgView = (props) => {
       mySvg.appendChild(g);
     }
   };
-  
+
   useEffect(() => {
     setSvg(document.getElementById("svg"));
   }, []);
@@ -202,12 +207,6 @@ const SvgView = (props) => {
       dependencies: setClass.dependencies ? setClass.dependencies : [],
     });
     actualizar(idN);
-  };
-
-  const resetColor = () => {
-    classes.forEach((value, key) => {
-      value.color = "black";
-    });
   };
 
   const handleNewClass = (setClass, id, e) => {
