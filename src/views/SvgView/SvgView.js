@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { WrapperView } from "../../GlobalStyle";
 import Header from "../../components/Header/Header";
 import DashBoard from "../../components/Dashboard/Dashboard";
-import { WrapperDesktop, WrapperSVG } from "./SvgView.styles";
+import { WrapperDesktop, WrapperBoard } from "../../GlobalStyle";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import Form from "../../components/Form/Form";
@@ -227,18 +227,18 @@ const SvgView = (props) => {
 
   return (
     <>
-      <Header title={"SVG"} />
+      <Header title={"SVG"} theme="svg" />
       <WrapperView>
         <WrapperDesktop>
           <DashBoard
-            color="#A6AFFF"
+            theme="svg"
             action={[setAction, openModal, guardar]}
           ></DashBoard>
-          <WrapperSVG>
+          <WrapperBoard>
             <Svg height={550} width={900}></Svg>
-          </WrapperSVG>
+          </WrapperBoard>
         </WrapperDesktop>
-        <Modal isOpen={isOpenModal} closeModal={closeModal}>
+        <Modal isOpen={isOpenModal} closeModal={closeModal} theme="svg">
           <p>NUEVA CLASE</p>
           <Form
             handleNewClass={handleNewClass}
@@ -247,7 +247,12 @@ const SvgView = (props) => {
             id="formClassCreate"
           />
         </Modal>
-        <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
+        <Modal
+          isOpen={isOpenModalE}
+          closeModal={closeModalE}
+          hasClose={true}
+          theme="svg"
+        >
           <p>EDITAR CLASE</p>
           <Form
             handleNewClass={handleNewClass}

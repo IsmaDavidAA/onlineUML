@@ -1,18 +1,16 @@
 import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-    :root {
+  :root {
         --white: #fff;
         --black: #000;
-        --blue: #1E3163;
-        --blueAgua: #0061A8;
-        --plomo: #999999;
-        --plomoAgua: #C4C4C4;
-        --blueSuave: #8AB6D6;
+        --svg: #00B1D2FF;
+        --canvas: #FDDB27FF;
     }
     * {
         margin:0px;
         padding:0px;
+        
     }
 `;
 
@@ -22,4 +20,15 @@ export const WrapperView = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+export const WrapperBoard = styled.div`
+  background: black;
+  flex: auto;
+`;
+
+export const WrapperDesktop = styled.div`
+  background: black;
+  display: flex;
+  flex: auto;
 `;

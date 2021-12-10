@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const WrapperDashboard = styled.div`
-  background: ${(props) => props.color};
+  background: ${(props) =>
+    props.theme === "svg" ? "var(--svg)" : "var(--canvas)"};
   align-items: center;
   display: flex;
   justify-content: center;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { calculator } from "../../utils/Calculator";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
-import { Ul } from "./Fomr.styles";
+import { Ul, WrapperForm } from "./Form.styles";
 const Form = (props) => {
   const [myClass, setMyClass] = useState({
     name: "",
@@ -17,11 +17,12 @@ const Form = (props) => {
     }
   }, []);
   return (
-    <form
+    <WrapperForm
       onSubmit={(e) => {
         props.handleNewClass(myClass, props.idClass, e);
       }}
       id={props.id}
+      theme={props.theme}
     >
       <label>
         Nombre:
@@ -125,7 +126,7 @@ const Form = (props) => {
           props.setAllGood(true);
         }}
       />
-    </form>
+    </WrapperForm>
   );
 };
 

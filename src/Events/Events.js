@@ -183,7 +183,7 @@ const removeLine = (currentKey, key) => {
 };
 
 export const eventsCanvas = {
-  onMouseDown: (
+  onMouseInheritancesDown: (
     actualizar,
     classes,
     fromClass,
@@ -209,4 +209,85 @@ export const eventsCanvas = {
     }
     actualizar();
   },
+  onMouseCommonDown: (
+    classes,
+    setCurrentClass,
+    setVisibleMenu,
+    setPositionMenu,
+    event
+  ) => {
+    if (event.button === 0) {
+      classes.forEach((value, key) => {
+        if (calculator.isItOverClass(value, event)) {
+          setCurrentClass(key);
+        }
+      });
+      setVisibleMenu(false);
+    } else if (event.button === 2) {
+      classes.forEach((value, key) => {
+        if (calculator.isItOverClass(value, event)) {
+          setPositionMenu({ x: event.clientX, y: event.clientY });
+          setVisibleMenu(true);
+        }
+      });
+    }
+  },
+  onMouseDependencyDown: (
+    classes,
+    fromClass,
+    setAction,
+    setFromClass,
+    actualizar,
+    event
+  ) => {
+    if (event.button === 0) {
+      classes.forEach((value, key) => {
+        if (calculator.isItOverClass(value, event)) {
+          if (!fromClass.current) {
+            value.color = "blue";
+            fromClass.current = key;
+          } else if (fromClass.current !== key) {
+            if (!classes.get(fromClass.current).dependencies.includes(key)) {
+              classes.get(fromClass.current).dependencies.push(key);
+              setAction(relations.NONE);
+              setFromClass(null);
+            }
+          }
+        }
+      });
+    } else {
+      setAction(relations.NONE);
+    }
+    actualizar();
+  },
+
+  onMouseMove: (classes, setClasses, currentClass, actualizar, event) => {
+    onMouseMoveSelectClass(classes, event);
+    if (currentClass.current) {
+      const newValue = {
+        ...classes.get(currentClass.current),
+        x:
+          event.clientX -
+          HORIZONTAL -
+          classes.get(currentClass.current).width / 2,
+        y:
+          event.clientY -
+          VERTICAL -
+          classes.get(currentClass.current).height / 2,
+      };
+      classes.set(currentClass.current, newValue);
+      setClasses(classes);
+    }
+    actualizar();
+  },
+};
+
+export const onMouseMoveSelectClass = (classes, event) => {
+  classes.forEach((value, key) => {
+    if (calculator.isItOverClass(value, event)) {
+      event.target.style.cursor = "pointer";
+    } else {
+      event.target.style.cursor = "default";
+    }
+  });
 };
