@@ -43,6 +43,17 @@ export const useClasses = (initialValue = false) => {
     }
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("classes")) {
+      const newMap = new Map(JSON.parse(localStorage.getItem("classes")));
+      setClasses(newMap);
+    }
+  }, []);
+
+  const guardar = () => {
+    localStorage.setItem("classes", JSON.stringify([...classes]));
+  };
+
   return [
     classes,
     setClasses,
@@ -55,5 +66,6 @@ export const useClasses = (initialValue = false) => {
     validClass,
     setValidClass,
     addClass,
+    guardar,
   ];
 };

@@ -41,20 +41,13 @@ export const eventsSvg = {
             })
           );
           const g = document.getElementById(fromClass.current);
-          const line = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
+          createLine(
+            g,
+            value,
+            key,
+            fromClass.current,
+            classes.get(fromClass.current)
           );
-          line.setAttribute("x1", 0);
-          line.setAttribute("y1", 0);
-          line.setAttribute(
-            "x2",
-            value.x - classes.get(fromClass.current).x + value.width / 2
-          );
-          line.setAttribute("y2", value.y - classes.get(fromClass.current).y);
-          line.setAttribute("stroke", "black");
-          line.setAttribute("id", `${fromClass.current}-line-${key}`);
-          g.appendChild(line);
           setFromClass(null);
           setAction(relations.NONE);
         }
@@ -81,20 +74,13 @@ export const eventsSvg = {
       } else if (fromClass.current !== key) {
         classes.get(fromClass.current).inheritances = [key];
         const g = document.getElementById(fromClass.current);
-        const line = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "line"
+        createLine(
+          g,
+          value,
+          key,
+          fromClass.current,
+          classes.get(fromClass.current)
         );
-        line.setAttribute("x1", 0);
-        line.setAttribute("y1", 0);
-        line.setAttribute(
-          "x2",
-          value.x - classes.get(fromClass.current).x + value.width / 2
-        );
-        line.setAttribute("y2", value.y - classes.get(fromClass.current).y);
-        line.setAttribute("stroke", "black");
-        line.setAttribute("id", `${fromClass.current}-line-${key}`);
-        g.appendChild(line);
         setAction(relations.NONE);
         setFromClass(null);
       }
@@ -164,6 +150,17 @@ export const eventsSvg = {
       setClasses(classes);
     }
   },
+};
+
+export const createLine = (g, value, key, currentKey, currentClass) => {
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", 0);
+  line.setAttribute("y1", 0);
+  line.setAttribute("x2", value.x - currentClass.x + value.width / 2);
+  line.setAttribute("y2", value.y - currentClass.y);
+  line.setAttribute("stroke", "black");
+  line.setAttribute("id", `${currentKey}-line-${key}`);
+  g.appendChild(line);
 };
 
 const updateLine = (value, key, currentKey, currentClass) => {

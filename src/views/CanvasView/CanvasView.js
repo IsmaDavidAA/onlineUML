@@ -31,12 +31,10 @@ const CanvasView = (props) => {
     validClass,
     setValidClass,
     addClass,
+    guardar,
   ] = useClasses();
 
-  const guardar = () => {
-    localStorage.setItem("clases", JSON.stringify([...classes]));
-    const newMap = new Map(JSON.parse(localStorage.getItem("clases")));
-  };
+  
 
   function borrar() {
     document.getElementById("formClassCreate").reset();
