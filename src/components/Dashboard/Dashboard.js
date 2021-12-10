@@ -5,7 +5,7 @@ import Space from "../Space/Space";
 import { WrapperDashboard } from "./Dashboard.styles";
 const DashBoard = (props) => {
   return (
-    <WrapperDashboard color={props.color}>
+    <WrapperDashboard theme={props.theme}>
       <Button action={props.action[1]} typeAction={relations.NONE}>
         CLASE
       </Button>
@@ -17,6 +17,7 @@ const DashBoard = (props) => {
       <Button action={props.action[0]} typeAction={relations.DEPENDENCY}>
         DEPENDENCIA
       </Button>
+      <Space h={10} w={10} />
       <Button action={props.action[2]} typeAction={props.clases}>
         GUARDAR
       </Button>

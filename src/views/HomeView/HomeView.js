@@ -1,18 +1,24 @@
 import React from "react";
 import ButtonLink from "../../components/ButtonLink/ButtonLink";
-import SeccionButton from "../../components/SeccionButton/SeccionButton";
 import Space from "../../components/Space/Space";
-import { WrapperView } from "./HomeView.styles";
+import { Half, WrapperButton, WrapperView } from "./HomeView.styles";
 
 const HomeView = (props) => {
   return (
     <>
       <WrapperView>
-        <SeccionButton>
-          <ButtonLink texto="SVG" color="#FF9797" url={`/svg`}></ButtonLink>
+        <WrapperButton theme="svg">
+          <ButtonLink texto="SVG" theme="svg" url={`/svg`}></ButtonLink>
           <Space h={10} w={10}></Space>
-          <ButtonLink texto="CANVAS" color="#A6AFFF" url={`/canvas`}></ButtonLink>
-        </SeccionButton>
+        </WrapperButton>
+        <WrapperButton theme="canvas">
+          <Space h={10} w={10}></Space>
+          <ButtonLink
+            texto="CANVAS"
+            theme="canvas"
+            url={`/canvas`}
+          ></ButtonLink>
+        </WrapperButton>
       </WrapperView>
     </>
   );

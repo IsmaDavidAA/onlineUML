@@ -3,7 +3,7 @@ import Canvas from "../../components/Canvas/Canvas";
 import DashBoard from "../../components/Dashboard/Dashboard";
 import Header from "../../components/Header/Header";
 import { WrapperView } from "../../GlobalStyle";
-import { WrapperCanvas, WrapperDesktop } from "./CanvasView.styles";
+import { WrapperBoard, WrapperDesktop } from "../../GlobalStyle";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
 import { relations } from "../../Constants";
@@ -130,7 +130,6 @@ const CanvasView = (props) => {
           return false;
         });
         resetColor();
-
         cv.oncontextmenu = function () {
           return false;
         };
@@ -174,13 +173,11 @@ const CanvasView = (props) => {
       setAction(relations.NONE);
     }
   }, [cx]);
-
   const resetColor = () => {
     classes.forEach((value, key) => {
       value.color = "black";
     });
   };
-
   const handleNewClass = (setClass, id, e) => {
     e.preventDefault();
     const exists = [...classes].some((value) => {
@@ -206,13 +203,12 @@ const CanvasView = (props) => {
         />
         <WrapperDesktop>
           <DashBoard
-            color="#A6AFFF"
-            clases={classes}
+            theme="canvas"
             action={[setAction, openModal, guardar]}
           ></DashBoard>
-          <WrapperCanvas>
+          <WrapperBoard>
             <Canvas height={550} width={900}></Canvas>
-          </WrapperCanvas>
+          </WrapperBoard>
         </WrapperDesktop>
         <Modal isOpen={isOpenModal} closeModal={closeModal}>
           <p>NUEVA CLASE</p>
