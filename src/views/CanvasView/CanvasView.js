@@ -194,7 +194,7 @@ const CanvasView = (props) => {
   return (
     <>
       <WrapperView>
-        <Header title={"CANVAS"} />
+        <Header title={"CANVAS"} theme="canvas" />
         <Menu
           visible={visibleMenu}
           top={positionMenu.y}
@@ -210,7 +210,7 @@ const CanvasView = (props) => {
             <Canvas height={550} width={900}></Canvas>
           </WrapperBoard>
         </WrapperDesktop>
-        <Modal isOpen={isOpenModal} closeModal={closeModal}>
+        <Modal isOpen={isOpenModal} closeModal={closeModal} theme="canvas">
           <p>NUEVA CLASE</p>
           <Form
             handleNewClass={handleNewClass}
@@ -219,7 +219,12 @@ const CanvasView = (props) => {
             id="formClassCreate"
           />
         </Modal>
-        <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
+        <Modal
+          isOpen={isOpenModalE}
+          closeModal={closeModalE}
+          hasClose={true}
+          theme="canvas"
+        >
           <p>EDITAR CLASE</p>
           <Form
             handleNewClass={handleNewClass}

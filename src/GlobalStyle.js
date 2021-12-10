@@ -1,7 +1,7 @@
 import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-    :root {
+  :root {
         --white: #fff;
         --black: #000;
         --svg: #00B1D2FF;
@@ -10,6 +10,7 @@ export const GlobalStyle = createGlobalStyle`
     * {
         margin:0px;
         padding:0px;
+        
     }
 `;
 

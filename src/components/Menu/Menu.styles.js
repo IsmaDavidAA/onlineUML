@@ -10,6 +10,7 @@ export const MenuWrapper = styled.menu`
   top: ${(props) => props.top + "px"};
   background-color: #fff;
   transition: 0.2s display ease-in;
+  font-family: "Fredoka One", cursive;
 `;
 
 export const MenuOption = styled.ul`

@@ -227,7 +227,7 @@ const SvgView = (props) => {
 
   return (
     <>
-      <Header title={"SVG"} />
+      <Header title={"SVG"} theme="svg" />
       <WrapperView>
         <WrapperDesktop>
           <DashBoard
@@ -238,7 +238,7 @@ const SvgView = (props) => {
             <Svg height={550} width={900}></Svg>
           </WrapperBoard>
         </WrapperDesktop>
-        <Modal isOpen={isOpenModal} closeModal={closeModal}>
+        <Modal isOpen={isOpenModal} closeModal={closeModal} theme="svg">
           <p>NUEVA CLASE</p>
           <Form
             handleNewClass={handleNewClass}
@@ -247,7 +247,12 @@ const SvgView = (props) => {
             id="formClassCreate"
           />
         </Modal>
-        <Modal isOpen={isOpenModalE} closeModal={closeModalE} hasClose={true}>
+        <Modal
+          isOpen={isOpenModalE}
+          closeModal={closeModalE}
+          hasClose={true}
+          theme="svg"
+        >
           <p>EDITAR CLASE</p>
           <Form
             handleNewClass={handleNewClass}

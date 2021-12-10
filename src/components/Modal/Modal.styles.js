@@ -11,6 +11,8 @@ export const Wrapper = styled.div`
   display:${(props) => (props.isOpenM ? "flex;" : "none;")}
   justify-content: center;
   align-items: center;
+  font-family: 'Fredoka One', cursive;
+
 `;
 
 export const ModalContainer = styled.div`
@@ -23,6 +25,8 @@ export const ModalContainer = styled.div`
   overflow-y: auto;
   background-color: #fff;
   text-align: center;
+  background: ${(props) =>
+    props.theme === "svg" ? "var(--svg)" : "var(--canvas)"};
 `;
 
 export const Close = styled.button`
