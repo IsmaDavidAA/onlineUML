@@ -168,6 +168,18 @@ export const createLine = (g, value, key, currentKey, currentClass) => {
   line.setAttribute("y2", value.y - currentClass.y);
   line.setAttribute("stroke", "black");
   line.setAttribute("id", `${currentKey}-line-${key}`);
+  const pol = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polygon" //polyline, dos rayas
+  );
+  var x2=value.x - currentClass.x + value.width / 2;
+  var y2 = value.y - currentClass.y;
+  pol.setAttribute("points",x2/8+","+y2/12+" "+0+","+0+" "+y2/12+","+x2/8);
+  pol.setAttribute(
+    "style",
+    `fill:white; stroke:black; stroke-width:1;` //polyline fill:none
+  );
+  g.appendChild(pol);
   g.appendChild(line);
 };
 
