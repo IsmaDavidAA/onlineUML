@@ -4,8 +4,9 @@ export const GlobalStyle = createGlobalStyle`
   :root {
         --white: #fff;
         --black: #000;
-        --svg: #00B1D2FF;
-        --canvas: #FDDB27FF;
+        --svg: #20A4F3;
+        --canvas: #fca311;
+        --neutro: #E3E3E3;
     }
     * {
         margin:0px;
@@ -23,12 +24,12 @@ export const WrapperView = styled.div`
 `;
 
 export const WrapperBoard = styled.div`
-  background: black;
+  background: var(--neutro);
   flex: auto;
 `;
 
 export const WrapperDesktop = styled.div`
-  background: black;
+  background: var(--neutro);
   display: flex;
   flex: auto;
 `;

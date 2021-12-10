@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 export const WrapperHeader = styled.div`
-  background: ${(props) =>
-    props.theme === "canvas" ? "var(--svg)" : "var(--canvas)"};
+  background: var(--neutro);
   padding: 0px;
   box-shadow: 0px 0px 10px 0 #999999;
   height: 50px;
