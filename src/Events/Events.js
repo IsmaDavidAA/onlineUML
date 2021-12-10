@@ -72,17 +72,25 @@ export const eventsSvg = {
         value.color = "blue";
         setFromClass(key);
       } else if (fromClass.current !== key) {
-        classes.get(fromClass.current).inheritances = [key];
-        const g = document.getElementById(fromClass.current);
-        createLine(
-          g,
-          value,
-          key,
-          fromClass.current,
-          classes.get(fromClass.current)
-        );
-        setAction(relations.NONE);
-        setFromClass(null);
+        if (!classes.get(fromClass.current).inheritances.includes(key)) {
+          if (classes.get(fromClass.current).inheritances.length > 0) {
+            removeLine(
+              fromClass.current,
+              classes.get(fromClass.current).inheritances[0]
+            );
+          }
+          classes.get(fromClass.current).inheritances = [key];
+          const g = document.getElementById(fromClass.current);
+          createLine(
+            g,
+            value,
+            key,
+            fromClass.current,
+            classes.get(fromClass.current)
+          );
+          setAction(relations.NONE);
+          setFromClass(null);
+        }
       }
     } else if (event.button === 2) {
       setAction(relations.NONE);
@@ -167,6 +175,11 @@ const updateLine = (value, key, currentKey, currentClass) => {
   const line = document.getElementById(`${key}-line-${currentKey}`);
   line.setAttribute("x2", currentClass.x - value.x + currentClass.width / 2);
   line.setAttribute("y2", currentClass.y - value.y);
+};
+
+const removeLine = (currentKey, key) => {
+  const line = document.getElementById(`${currentKey}-line-${key}`);
+  line.remove();
 };
 
 export const eventsCanvas = {
