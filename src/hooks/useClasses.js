@@ -42,7 +42,6 @@ export const useClasses = (initialValue = false) => {
       actualizar(idN);
     }
   };
-
   useEffect(() => {
     if (localStorage.getItem("classes")) {
       const newMap = new Map(JSON.parse(localStorage.getItem("classes")));

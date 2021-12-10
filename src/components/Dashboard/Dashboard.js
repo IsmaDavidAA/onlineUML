@@ -21,6 +21,16 @@ const DashBoard = (props) => {
       <Button action={props.action[2]} typeAction={props.clases}>
         GUARDAR
       </Button>
+      <Space h={10} w={10} />
+      <Button
+        action={() => {
+          localStorage.clear();
+          window.location.reload();
+        }}
+        typeAction={props.clases}
+      >
+        BORRAR
+      </Button>
     </WrapperDashboard>
   );
 };
