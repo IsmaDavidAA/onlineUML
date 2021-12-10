@@ -115,7 +115,7 @@ const CanvasView = (props) => {
       actualizar();
       if (action === relations.INHERITANCE) {
         cv.onmousedown = (e) =>
-          eventsCanvas.onMouseInheritances(
+          eventsCanvas.onMouseInheritancesDown(
             actualizar,
             classes,
             fromClass,
