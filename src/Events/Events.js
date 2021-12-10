@@ -1,4 +1,5 @@
 import { relations, HORIZONTAL, VERTICAL } from "../Constants";
+import { calculator } from "../utils/Calculator";
 export const eventsSvg = {
   onMouseMoveNull: (event) => {
     event.target.style.cursor = "pointer";
@@ -169,4 +170,33 @@ const updateLine = (value, key, currentKey, currentClass) => {
   const line = document.getElementById(`${key}-line-${currentKey}`);
   line.setAttribute("x2", currentClass.x - value.x + currentClass.width / 2);
   line.setAttribute("y2", currentClass.y - value.y);
+};
+
+export const eventsCanvas = {
+  onMouseDown: (
+    actualizar,
+    classes,
+    fromClass,
+    setAction,
+    setFromClass,
+    event
+  ) => {
+    if (event.button === 0) {
+      classes.forEach((value, key) => {
+        if (calculator.isItOverClass(value, event)) {
+          if (!fromClass.current) {
+            value.color = "blue";
+            fromClass.current = key;
+          } else if (fromClass.current !== key) {
+            classes.get(fromClass.current).inheritances = [key];
+            setAction(relations.NONE);
+            setFromClass(null);
+          }
+        }
+      });
+    } else {
+      setAction(relations.NONE);
+    }
+    actualizar();
+  },
 };

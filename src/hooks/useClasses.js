@@ -38,7 +38,9 @@ export const useClasses = (initialValue = false) => {
       inheritances: setClass.inheritances ? setClass.inheritances : [],
       dependencies: setClass.dependencies ? setClass.dependencies : [],
     });
-    actualizar(idN);
+    if (actualizar) {
+      actualizar(idN);
+    }
   };
 
   return [
