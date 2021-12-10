@@ -6,12 +6,11 @@ import { WrapperView } from "../../GlobalStyle";
 import { WrapperCanvas, WrapperDesktop } from "./CanvasView.styles";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../../components/Modal/Modal";
-import { calculator } from "../../utils/Calculator.js";
-import { relations, HORIZONTAL, VERTICAL } from "../../Constants";
+import { relations } from "../../Constants";
 import Menu from "../../components/Menu/Menu";
 import Form from "../../components/Form/Form";
 import { useClasses } from "../../hooks/useClasses";
-import { eventsCanvas } from "../../Events/Events";
+import { eventsCanvas, onMouseMoveSelectClass } from "../../Events/Events";
 const CanvasView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
   const [isOpenModalE, openModalE, closeModalE] = useModal();
@@ -33,13 +32,9 @@ const CanvasView = (props) => {
     addClass,
     guardar,
   ] = useClasses();
-
-  
-
   function borrar() {
     document.getElementById("formClassCreate").reset();
   }
-
   function actualizar() {
     cx.fillStyle = "#f0f0f0";
     cx.fillRect(0, 0, 900, 550);
@@ -117,11 +112,10 @@ const CanvasView = (props) => {
 
   useEffect(() => {
     if (cx) {
+      actualizar();
       if (action === relations.INHERITANCE) {
-        actualizar();
-
         cv.onmousedown = (e) =>
-          eventsCanvas.onMouseDown(
+          eventsCanvas.onMouseInheritances(
             actualizar,
             classes,
             fromClass,
@@ -129,107 +123,51 @@ const CanvasView = (props) => {
             setFromClass,
             e
           );
-
-        cv.onmousemove = function (event) {
-          onMouseMoveSelectClass(event);
-        };
+        cv.onmousemove = (e) => onMouseMoveSelectClass(classes, e);
       } else if (action === relations.NONE) {
         window.addEventListener("contextmenu", (e) => {
           e.preventDefault();
           return false;
         });
         resetColor();
-        actualizar();
 
         cv.oncontextmenu = function () {
           return false;
         };
-        cv.onmousedown = (event) => {
-          if (event.button === 0) {
-            classes.forEach((value, key) => {
-              if (calculator.isItOverClass(value, event)) {
-                setCurrentClass(key);
-              }
-            });
-            setVisibleMenu(false);
-          } else if (event.button === 2) {
-            classes.forEach((value, key) => {
-              if (calculator.isItOverClass(value, event)) {
-                setPositionMenu({ x: event.clientX, y: event.clientY });
-                setVisibleMenu(true);
-              }
-            });
-          }
-        };
-
-        cv.onmousemove = function (event) {
-          onMouseMoveSelectClass(event);
-          if (currentClass.current) {
-            const newValue = {
-              ...classes.get(currentClass.current),
-              x:
-                event.clientX -
-                HORIZONTAL -
-                classes.get(currentClass.current).width / 2,
-              y:
-                event.clientY -
-                VERTICAL -
-                classes.get(currentClass.current).height / 2,
-            };
-            classes.set(currentClass.current, newValue);
-            setClasses(classes);
-          }
-          actualizar();
-        };
-
-        cv.onmouseup = function (event) {
-          setCurrentClass(null);
-        };
+        cv.onmousedown = (e) =>
+          eventsCanvas.onMouseCommonDown(
+            classes,
+            setCurrentClass,
+            setVisibleMenu,
+            setPositionMenu,
+            e
+          );
+        cv.onmousemove = (e) =>
+          eventsCanvas.onMouseMove(
+            classes,
+            setClasses,
+            currentClass,
+            actualizar,
+            e
+          );
+        cv.onmouseup = () => setCurrentClass(null);
       } else if (action === relations.DEPENDENCY) {
-        actualizar();
-        cv.oncontextmenu = function () {
+        cv.oncontextmenu = () => {
           return false;
         };
-        cv.onmousedown = (event) => {
-          if (event.button === 0) {
-            classes.forEach((value, key) => {
-              if (calculator.isItOverClass(value, event)) {
-                if (!fromClass.current) {
-                  value.color = "blue";
-                  fromClass.current = key;
-                } else if (fromClass.current !== key) {
-                  if (
-                    !classes.get(fromClass.current).dependencies.includes(key)
-                  ) {
-                    classes.get(fromClass.current).dependencies.push(key);
-                    setAction(relations.NONE);
-                    setFromClass(null);
-                  }
-                }
-              }
-            });
-          } else {
-            setAction(relations.NONE);
-          }
-          actualizar();
-        };
-
-        cv.onmousemove = function (event) {
-          onMouseMoveSelectClass(event);
-        };
+        cv.onmousedown = (e) =>
+          eventsCanvas.onMouseDependencyDown(
+            classes,
+            fromClass,
+            setAction,
+            setFromClass,
+            actualizar,
+            e
+          );
+        cv.onmousemove = (e) => onMouseMoveSelectClass(classes, e);
       }
     }
   }, [action]);
-
-  const onMouseMoveSelectClass = (event) => {
-    classes.forEach((value, key) => {
-      if (calculator.isItOverClass(value, event)) {
-        event.target.style.cursor = "pointer";
-      } else {
-        event.target.style.cursor = "default";
-      }
-    });
-  };
 
   useEffect(() => {
     if (cx) {
