@@ -8,7 +8,7 @@ import Modal from "../../components/Modal/Modal";
 import Form from "../../components/Form/Form";
 import Svg from "../../components/Svg/Svg";
 import { relations } from "../../Constants";
-import { eventsSvg } from "../../Events/Events";
+import { eventsSvg, createLine } from "../../Events/Events";
 import { useClasses } from "../../hooks/useClasses";
 const SvgView = (props) => {
   const [isOpenModal, openModal, closeModal] = useModal();
@@ -25,6 +25,7 @@ const SvgView = (props) => {
     validClass,
     setValidClass,
     addClass,
+    guardar,
   ] = useClasses();
   const [svg, setSvg] = useState(null);
   const [visibleMenu, setVisibleMenu] = useState(false);
@@ -35,6 +36,9 @@ const SvgView = (props) => {
       const mySvg = document.getElementById("svg");
       const value = classes.get(key);
       const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.setAttribute("x", 0);
+      g.setAttribute("y", 0);
+
       const rect = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "rect"
@@ -117,9 +121,32 @@ const SvgView = (props) => {
           text.appendChild(inherit);
         });
       }
+      value.inheritances.forEach((inheritance) => {
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        line.setAttribute("y1", aumento - 12);
+        line.setAttribute("x2", value.width);
+        line.setAttribute("y2", aumento - 12);
+        line.setAttribute("stroke", "black");
+        g.appendChild(line);
+      });
+
+      value.dependencies.forEach((dependency) => {
+        createLine(g, classes.get(dependency), dependency, key, value);
+      });
+      value.inheritances.forEach((inheritance) => {
+        createLine(g, classes.get(inheritance), inheritance, key, value);
+      });
       g.appendChild(rect);
       g.appendChild(text);
       mySvg.appendChild(g);
+      g.setAttributeNS(
+        null,
+        "transform",
+        "translate(" + value.x + "," + value.y + ")"
+      );
     }
   };
 
@@ -177,6 +204,11 @@ const SvgView = (props) => {
 
   useEffect(() => {
     if (svg) {
+      classes.forEach((value, key) => {
+        setCurrentClass(key);
+        actualizar(key);
+      });
+      setCurrentClass(null);
       setAction(relations.NONE);
     }
   }, [svg]);
@@ -200,7 +232,7 @@ const SvgView = (props) => {
         <WrapperDesktop>
           <DashBoard
             color="#A6AFFF"
-            action={[setAction, openModal]}
+            action={[setAction, openModal, guardar]}
           ></DashBoard>
           <WrapperSVG>
             <Svg height={550} width={900}></Svg>

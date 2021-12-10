@@ -38,7 +38,20 @@ export const useClasses = (initialValue = false) => {
       inheritances: setClass.inheritances ? setClass.inheritances : [],
       dependencies: setClass.dependencies ? setClass.dependencies : [],
     });
-    actualizar(idN);
+    if (actualizar) {
+      actualizar(idN);
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("classes")) {
+      const newMap = new Map(JSON.parse(localStorage.getItem("classes")));
+      setClasses(newMap);
+    }
+  }, []);
+
+  const guardar = () => {
+    localStorage.setItem("classes", JSON.stringify([...classes]));
   };
 
   return [
@@ -53,5 +66,6 @@ export const useClasses = (initialValue = false) => {
     validClass,
     setValidClass,
     addClass,
+    guardar,
   ];
 };

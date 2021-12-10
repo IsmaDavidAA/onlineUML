@@ -1,4 +1,5 @@
 import { relations, HORIZONTAL, VERTICAL } from "../Constants";
+import { calculator } from "../utils/Calculator";
 export const eventsSvg = {
   onMouseMoveNull: (event) => {
     event.target.style.cursor = "pointer";
@@ -40,20 +41,13 @@ export const eventsSvg = {
             })
           );
           const g = document.getElementById(fromClass.current);
-          const line = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
+          createLine(
+            g,
+            value,
+            key,
+            fromClass.current,
+            classes.get(fromClass.current)
           );
-          line.setAttribute("x1", 0);
-          line.setAttribute("y1", 0);
-          line.setAttribute(
-            "x2",
-            value.x - classes.get(fromClass.current).x + value.width / 2
-          );
-          line.setAttribute("y2", value.y - classes.get(fromClass.current).y);
-          line.setAttribute("stroke", "black");
-          line.setAttribute("id", `${fromClass.current}-line-${key}`);
-          g.appendChild(line);
           setFromClass(null);
           setAction(relations.NONE);
         }
@@ -78,24 +72,25 @@ export const eventsSvg = {
         value.color = "blue";
         setFromClass(key);
       } else if (fromClass.current !== key) {
-        classes.get(fromClass.current).inheritances = [key];
-        const g = document.getElementById(fromClass.current);
-        const line = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "line"
-        );
-        line.setAttribute("x1", 0);
-        line.setAttribute("y1", 0);
-        line.setAttribute(
-          "x2",
-          value.x - classes.get(fromClass.current).x + value.width / 2
-        );
-        line.setAttribute("y2", value.y - classes.get(fromClass.current).y);
-        line.setAttribute("stroke", "black");
-        line.setAttribute("id", `${fromClass.current}-line-${key}`);
-        g.appendChild(line);
-        setAction(relations.NONE);
-        setFromClass(null);
+        if (!classes.get(fromClass.current).inheritances.includes(key)) {
+          if (classes.get(fromClass.current).inheritances.length > 0) {
+            removeLine(
+              fromClass.current,
+              classes.get(fromClass.current).inheritances[0]
+            );
+          }
+          classes.get(fromClass.current).inheritances = [key];
+          const g = document.getElementById(fromClass.current);
+          createLine(
+            g,
+            value,
+            key,
+            fromClass.current,
+            classes.get(fromClass.current)
+          );
+          setAction(relations.NONE);
+          setFromClass(null);
+        }
       }
     } else if (event.button === 2) {
       setAction(relations.NONE);
@@ -165,8 +160,53 @@ export const eventsSvg = {
   },
 };
 
+export const createLine = (g, value, key, currentKey, currentClass) => {
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", 0);
+  line.setAttribute("y1", 0);
+  line.setAttribute("x2", value.x - currentClass.x + value.width / 2);
+  line.setAttribute("y2", value.y - currentClass.y);
+  line.setAttribute("stroke", "black");
+  line.setAttribute("id", `${currentKey}-line-${key}`);
+  g.appendChild(line);
+};
+
 const updateLine = (value, key, currentKey, currentClass) => {
   const line = document.getElementById(`${key}-line-${currentKey}`);
   line.setAttribute("x2", currentClass.x - value.x + currentClass.width / 2);
   line.setAttribute("y2", currentClass.y - value.y);
+};
+
+const removeLine = (currentKey, key) => {
+  const line = document.getElementById(`${currentKey}-line-${key}`);
+  line.remove();
+};
+
+export const eventsCanvas = {
+  onMouseDown: (
+    actualizar,
+    classes,
+    fromClass,
+    setAction,
+    setFromClass,
+    event
+  ) => {
+    if (event.button === 0) {
+      classes.forEach((value, key) => {
+        if (calculator.isItOverClass(value, event)) {
+          if (!fromClass.current) {
+            value.color = "blue";
+            fromClass.current = key;
+          } else if (fromClass.current !== key) {
+            classes.get(fromClass.current).inheritances = [key];
+            setAction(relations.NONE);
+            setFromClass(null);
+          }
+        }
+      });
+    } else {
+      setAction(relations.NONE);
+    }
+    actualizar();
+  },
 };
