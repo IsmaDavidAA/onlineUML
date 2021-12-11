@@ -49,9 +49,11 @@ Abra [http://localhost:3000](http://localhost:3000) para verlo en su navegador.
 Tanto para `canvas` como para `SVG`
 
 - Crear clases.
+![new](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/nueva%20clase.gif)
 - Relación de herencia.
 - Relación de dependencia.
 - Guardar en localStorage.
+![save](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/guardar%20diagrama.gif)
 - Eliminar de localStorage.
 - Limpiar pantalla eliminando todas las clases en una sola acción.
 
@@ -66,6 +68,33 @@ Tanto para `canvas` como para `SVG`
 - Editar y eliminar relaciones entre clases.
 
 ## Arquitectura
+
+### App
+![a](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/app.png)
+### Constants
+![co](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/constants.png)
+### GlobalStyles
+![g](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/globalStyles.png)
+### Utils
+![ca](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/calculator.png)
+#### Calculator
+### Views
+![v](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/views.png)
+#### HomeView
+#### CanvasView
+#### SvgView
+
+### Components
+![com](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/componentes.png)
+### Hooks
+![h](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/hooks.png)
+#### useModal
+#### useClasses
+
+### Events
+![e](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/events.png)
+#### eventsCanvas
+#### eventsSVG
 
 ## Deploy-Repositorio
 
