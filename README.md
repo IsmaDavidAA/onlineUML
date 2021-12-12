@@ -72,48 +72,53 @@ Tanto para `canvas` como para `SVG`
 ### App
 Este fichero app.js ya viene incluido con React, es el que renderiza en el index.js, es decir, es el que muestra en la vista cuando lo levantamos. 
 Este componente es base para para continua con el proyecto , ya que en el podremos configurar las rutas internas para la nevegación.
+
 ![a](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/app.png)
 ### Constants
 En este componente definimos los tipos de relaciones que tiene cada clase: dependencia, herencia o en algún caso ninguno.
+
 ![co](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/constants.png)
 ### GlobalStyles
-... definimos los estilos de forma global, es decir, de toda la app en general.
+El fichero definimos los estilos de forma global, es decir, de toda la app en general.
+
 ![g](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/globalStyles.png)
 ### Utils
-Este archivo es para trabajar la parte matemática o lógica, en este caso tenemos el fichero... Calculator.js.
+Este archivo es para trabajar la parte matemática o lógica, en este caso tenemos el fichero Calculator.js.
+
 ![ca](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/calculator.png)
 #### Calculator
-.... Calculator.js, es el que realiza los calculos de tamaño de la clase (según el tamaño del nombre y las cantidades de atributos o métodos), separadores de linea, genera los IDs de cada clase,etc.
+El fichero Calculator.js, es el que realiza los calculos de tamaño de la clase (según el tamaño del nombre y las cantidades de atributos o métodos), separadores de linea, genera los IDs de cada clase,etc.
 ### Views
-Es para la visualización del usuario dentro de la pizarra de la app.
+Ete archivo es para la visualización del usuario dentro de la pizarra de la app.
 Nuestro directorio de archivos es de la siguiente manera:
+
 ![v](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/views.png)
 #### HomeView
-... es para las funcionalidades del inicio de la app, es decir, direcciona los botones, ya sea la ventana de svg o canvas.
-...home.styles
+El fichero es para las funcionalidades del inicio de la app, es decir, direcciona los botones, ya sea la ventana de svg o canvas.
+
 #### CanvasView
-... es para la creación y visualización de nuevas clases, con su respectivo datos como: nombre, atributo, método, tipo de relación, etc., es decir, las graficaciones con canvas.
+El fichero es para la creación y visualización de nuevas clases, con su respectivo datos como: nombre, atributo, método, tipo de relación, etc., es decir, las graficaciones con canvas.
 #### SvgView
-... es para la creación y visualización de nuevas clases, con su respectivo datos como: nombre, atributo, método, tipo de relación, etc., es decir, las graficaciones con svg.
+El fichero es para la creación y visualización de nuevas clases, con su respectivo datos como: nombre, atributo, método, tipo de relación, etc., es decir, las graficaciones con svg.
 ### Components
 Un componente es un archivo js que se usa para construir interfaces de usuario de manera rápida y eficiente. Es la parte lógica que controla un trozo de pantalla como por ejemplo el nav, el footer, un article, un section, etc.
 Nuestro directorio de archivos se ve de la siguiente manera:
+
 ![com](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/componentes.png)
 ### Hooks
 Los hooks son funciones que te permiten "enganchar" el estado de React y el ciclo de vida desde los componentes de función.
 Nuestro directorio de archivos se ve de la siguiente manera:
+
 ![h](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/hooks.png)
 #### useModal
-... es para definir el estado del modelo, open o close.
+El fichero es para definir el estado del modelo, open o close.
 #### useClasses
-... es para definir los estados de cada clase, con sus respectivos datos, también guarda todas las clases en un map y en el localstorage.
-### Events--------------
-Este ... es para el manejo de eventos que realizamos en la app.
+El fichero es para definir los estados de cada clase, con sus respectivos datos, también guarda todas las clases en un map y en el localstorage.
+### Events
+Este fichero es para el manejo de eventos que realizamos en la app.
 Nuestro directorio de archivos se ve de la siguiente manera:
-![e](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/events.png)
-#### eventsCanvas
-#### eventsSVG
 
+![e](https://github.com/IsmaDavidAA/onlineUML/blob/main/src/images/events.png)
 #### Events
 Es para las funcionalidades del manejo de mouse, a la hora de relacionar dos clases dentro de la pizarra, tanto svg como canvas.
 ## Deploy-Repositorio
