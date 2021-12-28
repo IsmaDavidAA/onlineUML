@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { WrapperView } from "../../GlobalStyle";
-import Header from "../../components/Header/Header";
+import Header from "../../components/Header/HeaderDiagram";
 import DashBoard from "../../components/Dashboard/Dashboard";
 import { WrapperDesktop, WrapperBoard } from "../../GlobalStyle";
 import { useModal } from "../../hooks/useModal";

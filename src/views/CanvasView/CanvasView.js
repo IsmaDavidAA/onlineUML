@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Canvas from "../../components/Canvas/Canvas";
 import DashBoard from "../../components/Dashboard/Dashboard";
-import Header from "../../components/Header/Header";
+import Header from "../../components/Header/HeaderDiagram";
 import { WrapperView } from "../../GlobalStyle";
 import { WrapperBoard, WrapperDesktop } from "../../GlobalStyle";
 import { useModal } from "../../hooks/useModal";
