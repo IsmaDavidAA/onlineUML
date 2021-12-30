@@ -4,17 +4,13 @@
   "private": true,
   "engines": {
     "node": "14.x",
-    "npm": "7.x"
+    "npm":"7.x"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "bcrypt": "^5.0.1",
     "components": "^0.1.0",
-    "express": "^4.17.2",
-    "mongodb": "^4.2.2",
-    "mongoose": "^6.1.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router": "^5.2.1",

@@ -10,7 +10,6 @@ import CanvasView from "./views/CanvasView/CanvasView";
 import SvgView from "./views/SvgView/SvgView";
 import LoginView from "./views/LoginView/LoginView";
 import { GlobalStyle } from "./GlobalStyle";
-
 function App() {
   return (
     <Router>
